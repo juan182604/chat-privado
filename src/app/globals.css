@@ -118,21 +118,22 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* iOS safe area padding — prevents content from being hidden under the notch / home indicator */
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
+    /* iOS safe area padding — extra padding to ensure buttons are tappable */
+    padding-top: calc(env(safe-area-inset-top) + 12px);
+    padding-bottom: calc(env(safe-area-inset-bottom) + 12px);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
   }
-  /* Ensure headers and footers respect safe areas */
+  /* Headers need extra top padding on iOS */
   header {
-    padding-top: max(env(safe-area-inset-top), 0.5rem) !important;
+    padding-top: calc(env(safe-area-inset-top) + 8px) !important;
   }
+  /* Footers need extra bottom padding on iOS */
   footer {
-    padding-bottom: max(env(safe-area-inset-bottom), 0.5rem) !important;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 8px) !important;
   }
-  /* The bottom navigation also needs safe area */
+  /* Bottom navigation needs extra padding too */
   nav {
-    padding-bottom: max(env(safe-area-inset-bottom), 0.25rem) !important;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 6px) !important;
   }
 }
