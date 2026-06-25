@@ -11,7 +11,6 @@
   "orientation": "portrait",
   "categories": ["social", "communication"],
   "lang": "es",
-  "dir": "ltr",
   "icons": [
     {
       "src": "/icon-192.png",
@@ -36,15 +35,6 @@
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Chats",
-      "short_name": "Chats",
-      "description": "Ver conversaciones",
-      "url": "/",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

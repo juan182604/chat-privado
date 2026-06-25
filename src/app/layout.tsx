@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,31 +54,38 @@ export default function RootLayout({
         <style dangerouslySetInnerHTML={{ __html: `
           * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
           html, body {
-            margin: 0; padding: 0; width: 100%; height: 100%;
+            margin: 0; padding: 0; width: 100%;
             overflow: hidden; background: #000;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
           }
-          /* FIXED PIXEL PADDING — works on ALL iPhones regardless of env() support.
-             Notch iPhones need ~50px top, ~34px bottom.
-             We use max() so it works on both notch and non-notch phones. */
+          /* 92vh — la app ocupa 92% de la pantalla, 4% libre arriba y abajo */
           #app-shell {
             width: 100%;
-            height: 100%;
-            padding-top: max(50px, env(safe-area-inset-top, 50px));
-            padding-bottom: max(40px, env(safe-area-inset-bottom, 40px));
-            padding-left: max(8px, env(safe-area-inset-left, 8px));
-            padding-right: max(8px, env(safe-area-inset-right, 8px));
+            height: 92vh;
+            margin: 4vh auto;
             background: #0a0a0a;
             overflow: hidden;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            position: relative;
+            border-radius: 0;
+          }
+        `}} />
+        {/* Script que ELIMINA cualquier service worker viejo */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+              for(var registration of registrations) {
+                registration.unregister();
+              }
+            });
+            caches.keys().then(function(names) {
+              for(var name of names) caches.delete(name);
+            });
           }
         `}} />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} style={{ background: '#000' }}>
         <div id="app-shell">{children}</div>
         <Toaster />
-        <ServiceWorkerRegister />
       </body>
     </html>
   );
