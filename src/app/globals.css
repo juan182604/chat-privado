@@ -118,5 +118,21 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* iOS safe area padding — prevents content from being hidden under the notch / home indicator */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  /* Ensure headers and footers respect safe areas */
+  header {
+    padding-top: max(env(safe-area-inset-top), 0.5rem) !important;
+  }
+  footer {
+    padding-bottom: max(env(safe-area-inset-bottom), 0.5rem) !important;
+  }
+  /* The bottom navigation also needs safe area */
+  nav {
+    padding-bottom: max(env(safe-area-inset-bottom), 0.25rem) !important;
   }
 }
