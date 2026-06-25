@@ -33,22 +33,19 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: "Chat Privado",
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
     startupImage: ["/icon-512.png"],
   },
 };
 
-// Use viewport-fit=contain instead of cover so the content does NOT go
-// under the notch / home indicator. This makes the app appear slightly
-// smaller (with black bars at the edges) but guarantees all buttons are
-// fully tappable on iPhone.
+// viewport-fit=cover is REQUIRED for env(safe-area-inset-*) to work in PWA mode
 export const viewport: Viewport = {
   themeColor: "#10b981",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  viewportFit: "contain",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -59,16 +56,15 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
-        {/* iOS PWA meta tags */}
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Chat Privado" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        {/* Use default status bar style so the status bar has a solid background */}
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
         <link rel="shortcut icon" href="/favicon.ico" />
-        {/* Extra safe area padding via CSS variables */}
         <style dangerouslySetInnerHTML={{ __html: `
           :root {
             --safe-top: env(safe-area-inset-top, 0px);
@@ -76,29 +72,38 @@ export default function RootLayout({
             --safe-left: env(safe-area-inset-left, 0px);
             --safe-right: env(safe-area-inset-right, 0px);
           }
-          html, body {
+          html {
             box-sizing: border-box;
           }
+          *, *::before, *::after {
+            box-sizing: inherit;
+          }
           body {
-            padding-top: calc(var(--safe-top) + 16px) !important;
-            padding-bottom: calc(var(--safe-bottom) + 16px) !important;
-            padding-left: calc(var(--safe-left) + 8px) !important;
-            padding-right: calc(var(--safe-right) + 8px) !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #0a0a0a;
           }
-          header {
-            padding-top: calc(var(--safe-top) + 12px) !important;
-            margin-top: 0 !important;
-          }
-          footer, nav {
-            padding-bottom: calc(var(--safe-bottom) + 10px) !important;
-            margin-bottom: 0 !important;
+          /* App container: fixed full-screen with safe area padding */
+          #app-root {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding-top: calc(var(--safe-top) + 20px);
+            padding-bottom: calc(var(--safe-bottom) + 20px);
+            padding-left: calc(var(--safe-left) + 8px);
+            padding-right: calc(var(--safe-right) + 8px);
+            overflow: hidden;
           }
         `}} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-950 text-zinc-100`}
       >
-        {children}
+        <div id="app-root">
+          {children}
+        </div>
         <Toaster />
         <ServiceWorkerRegister />
       </body>

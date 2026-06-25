@@ -36,16 +36,7 @@ export function MainApp() {
   const inChat = tab === 'chats' && activeChatPeerId
 
   return (
-    <div
-      className="flex flex-col bg-zinc-950 text-zinc-100 max-w-2xl mx-auto relative"
-      style={{
-        height: '100dvh',
-        paddingTop: 'calc(env(safe-area-inset-top) + 16px)',
-        paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)',
-        paddingLeft: 'calc(env(safe-area-inset-left) + 8px)',
-        paddingRight: 'calc(env(safe-area-inset-right) + 8px)',
-      }}
-    >
+    <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 max-w-2xl mx-auto relative">
       <div className="flex-1 overflow-hidden relative">
         {inChat ? (
           <ChatView peerId={activeChatPeerId!} onBack={() => setActiveChat(null)} />
