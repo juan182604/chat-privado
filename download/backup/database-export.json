@@ -1,0 +1,1010 @@
+{
+  "_exportedAt": "2026-06-25T11:04:21.869Z",
+  "_version": "1.0",
+  "users": [
+    {
+      "id": "cmqsn9n9q0000qz3t2b1cgn23",
+      "uniqueId": "croki0",
+      "username": "croki01",
+      "firstName": "Croki",
+      "lastName": "Admin",
+      "role": "super_admin",
+      "blocked": 0,
+      "blockReason": null,
+      "blockedAt": null,
+      "createdAt": 1782340085006,
+      "updatedAt": "2026-06-25T11:04:03.761Z"
+    },
+    {
+      "id": "cmqspg6f8001aqzwc2jm7h2k1",
+      "uniqueId": "tnfa8r",
+      "username": "cosobo",
+      "firstName": "jose",
+      "lastName": "perwez",
+      "role": "user",
+      "blocked": 0,
+      "blockReason": null,
+      "blockedAt": null,
+      "createdAt": 1782343748997,
+      "updatedAt": 1782343748997
+    },
+    {
+      "id": "cmqssrsby003hqzwcm7afnlsn",
+      "uniqueId": "54jexd",
+      "username": "condon",
+      "firstName": "jo",
+      "lastName": "se",
+      "role": "user",
+      "blocked": 0,
+      "blockReason": null,
+      "blockedAt": null,
+      "createdAt": 1782349329454,
+      "updatedAt": 1782349329454
+    },
+    {
+      "id": "cmqszfunu0050qzwcd9w4nba3",
+      "uniqueId": "4thag6",
+      "username": "receptor",
+      "firstName": "Recep",
+      "lastName": "Tor",
+      "role": "user",
+      "blocked": 0,
+      "blockReason": null,
+      "blockedAt": null,
+      "createdAt": 1782360529915,
+      "updatedAt": 1782360529915
+    },
+    {
+      "id": "cmqt0xikv0010qzzuqafcnqyz",
+      "uniqueId": "fzv2do",
+      "username": "cayo",
+      "firstName": "hjhj",
+      "lastName": "hjhjh",
+      "role": "user",
+      "blocked": 0,
+      "blockReason": null,
+      "blockedAt": null,
+      "createdAt": 1782363033679,
+      "updatedAt": 1782363033679
+    },
+    {
+      "id": "cmqtarcn8enzo657p",
+      "uniqueId": "yl4nyt",
+      "username": "lobo",
+      "firstName": "adad",
+      "lastName": "adasda",
+      "role": "user",
+      "blocked": 0,
+      "blockReason": null,
+      "blockedAt": null,
+      "createdAt": "2026-06-25T09:25:42.212Z",
+      "updatedAt": "2026-06-25T09:25:42.212Z"
+    }
+  ],
+  "friendships": [
+    {
+      "id": "cmqspgf8t001eqzwc7vr1dn44",
+      "userId": "cmqspg6f8001aqzwc2jm7h2k1",
+      "friendId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "status": "accepted",
+      "createdAt": 1782343760429
+    },
+    {
+      "id": "cmqspgf8t001gqzwc4xby9qmb",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "friendId": "cmqspg6f8001aqzwc2jm7h2k1",
+      "status": "accepted",
+      "createdAt": 1782343760429
+    },
+    {
+      "id": "cmqsst85c003lqzwchbzmwxnz",
+      "userId": "cmqssrsby003hqzwcm7afnlsn",
+      "friendId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "status": "accepted",
+      "createdAt": 1782349396609
+    },
+    {
+      "id": "cmqsst85d003nqzwc8r7nf2a2",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "friendId": "cmqssrsby003hqzwcm7afnlsn",
+      "status": "accepted",
+      "createdAt": 1782349396609
+    },
+    {
+      "id": "cmqszfuq90054qzwcnpahmmm7",
+      "userId": "cmqszfunu0050qzwcd9w4nba3",
+      "friendId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "status": "accepted",
+      "createdAt": 1782360530001
+    },
+    {
+      "id": "cmqszfuq90056qzwcsn26si4i",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "friendId": "cmqszfunu0050qzwcd9w4nba3",
+      "status": "accepted",
+      "createdAt": 1782360530001
+    },
+    {
+      "id": "cmqt0vu1l000xqzzu3vuk98wi",
+      "userId": "cmqssrsby003hqzwcm7afnlsn",
+      "friendId": "cmqspg6f8001aqzwc2jm7h2k1",
+      "status": "accepted",
+      "createdAt": 1782362955225
+    },
+    {
+      "id": "cmqt0vu1l000zqzzunkblr3we",
+      "userId": "cmqspg6f8001aqzwc2jm7h2k1",
+      "friendId": "cmqssrsby003hqzwcm7afnlsn",
+      "status": "accepted",
+      "createdAt": 1782362955225
+    },
+    {
+      "id": "cmqtbvu5h6dvt6asu",
+      "userId": "cmqtarcn8enzo657p",
+      "friendId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "status": "accepted",
+      "createdAt": "2026-06-25T09:57:11.141Z"
+    },
+    {
+      "id": "cmqtbvu5ha4w6swgv",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "friendId": "cmqtarcn8enzo657p",
+      "status": "accepted",
+      "createdAt": "2026-06-25T09:57:11.141Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": "cmqtanjzfawp1iocn",
+      "senderId": "cmqspg6f8001aqzwc2jm7h2k1",
+      "receiverId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "type": "text",
+      "content": "hola",
+      "mediaPath": null,
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T09:22:45.099Z",
+      "readAt": "2026-06-25T09:22:45.806Z",
+      "expiresAt": "2026-06-25T19:22:45.806Z",
+      "photoExpiresSeconds": null,
+      "photoViewStartedAt": null,
+      "photoExpired": 0
+    },
+    {
+      "id": "cmqtaoevmn0r5wc81",
+      "senderId": "cmqspg6f8001aqzwc2jm7h2k1",
+      "receiverId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "type": "text",
+      "content": "dfdgd",
+      "mediaPath": null,
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T09:23:25.138Z",
+      "readAt": "2026-06-25T09:23:29.416Z",
+      "expiresAt": "2026-06-25T19:23:29.416Z",
+      "photoExpiresSeconds": null,
+      "photoViewStartedAt": null,
+      "photoExpired": 0
+    },
+    {
+      "id": "cmqtaolge8uqbv0xu",
+      "senderId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "receiverId": "cmqspg6f8001aqzwc2jm7h2k1",
+      "type": "text",
+      "content": "sdgsd",
+      "mediaPath": null,
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T09:23:33.662Z",
+      "readAt": "2026-06-25T09:23:34.574Z",
+      "expiresAt": "2026-06-25T19:23:34.574Z",
+      "photoExpiresSeconds": null,
+      "photoViewStartedAt": null,
+      "photoExpired": 0
+    },
+    {
+      "id": "cmqtboll6u2ik8mnn",
+      "senderId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "receiverId": "cmqspg6f8001aqzwc2jm7h2k1",
+      "type": "photo",
+      "content": null,
+      "mediaPath": "photo/1782381070931-acce17af.jpg",
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T09:51:33.450Z",
+      "readAt": null,
+      "expiresAt": "2026-06-25T19:51:33.450Z",
+      "photoExpiresSeconds": 60,
+      "photoViewStartedAt": null,
+      "photoExpired": 0
+    },
+    {
+      "id": "cmqtbomfe16yjc187",
+      "senderId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "receiverId": "cmqspg6f8001aqzwc2jm7h2k1",
+      "type": "voice",
+      "content": null,
+      "mediaPath": "voice/1782381093932-f96150a6.webm",
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T09:51:34.538Z",
+      "readAt": null,
+      "expiresAt": "2026-06-25T19:51:34.538Z",
+      "photoExpiresSeconds": null,
+      "photoViewStartedAt": null,
+      "photoExpired": 0
+    },
+    {
+      "id": "cmqtbrgq6u7pt5lrl",
+      "senderId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "receiverId": "cmqspg6f8001aqzwc2jm7h2k1",
+      "type": "voice",
+      "content": null,
+      "mediaPath": "voice/1782381226643-70d29b4c.webm",
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T09:53:47.117Z",
+      "readAt": null,
+      "expiresAt": "2026-06-25T19:53:47.117Z",
+      "photoExpiresSeconds": null,
+      "photoViewStartedAt": null,
+      "photoExpired": 0
+    },
+    {
+      "id": "cmqtbs9zwa13zyspo",
+      "senderId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "receiverId": "cmqspg6f8001aqzwc2jm7h2k1",
+      "type": "text",
+      "content": "gg",
+      "mediaPath": null,
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T09:54:25.052Z",
+      "readAt": null,
+      "expiresAt": "2026-06-25T19:54:25.052Z",
+      "photoExpiresSeconds": null,
+      "photoViewStartedAt": null,
+      "photoExpired": 0
+    },
+    {
+      "id": "cmqtbvyourkcwonjy",
+      "senderId": "cmqtarcn8enzo657p",
+      "receiverId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "type": "text",
+      "content": "zczsc",
+      "mediaPath": null,
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T09:57:17.022Z",
+      "readAt": "2026-06-25T09:57:22.271Z",
+      "expiresAt": "2026-06-25T19:57:22.271Z",
+      "photoExpiresSeconds": null,
+      "photoViewStartedAt": null,
+      "photoExpired": 0
+    },
+    {
+      "id": "cmqtbwb2eq8v0z2i7",
+      "senderId": "cmqtarcn8enzo657p",
+      "receiverId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "type": "voice",
+      "content": null,
+      "mediaPath": "voice/1782381452604-c68a75f3.webm",
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T09:57:33.062Z",
+      "readAt": "2026-06-25T09:57:33.770Z",
+      "expiresAt": "2026-06-25T19:57:33.770Z",
+      "photoExpiresSeconds": null,
+      "photoViewStartedAt": null,
+      "photoExpired": 0
+    },
+    {
+      "id": "cmqtbwvn9803n6i4u",
+      "senderId": "cmqtarcn8enzo657p",
+      "receiverId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "type": "photo",
+      "content": null,
+      "mediaPath": "photo/1782381479154-1ff86727.png",
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T09:57:59.733Z",
+      "readAt": "2026-06-25T09:58:14.310Z",
+      "expiresAt": "2026-06-25T19:58:14.310Z",
+      "photoExpiresSeconds": 5,
+      "photoViewStartedAt": "2026-06-25T09:58:14.310Z",
+      "photoExpired": 1
+    },
+    {
+      "id": "cmqtc7tpykyj88b4p",
+      "senderId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "receiverId": "cmqspg6f8001aqzwc2jm7h2k1",
+      "type": "voice",
+      "content": null,
+      "mediaPath": "voice/1782381989201-2a8e9d16.webm",
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T10:06:30.454Z",
+      "readAt": null,
+      "expiresAt": "2026-06-25T20:06:30.454Z",
+      "photoExpiresSeconds": null,
+      "photoViewStartedAt": null,
+      "photoExpired": 0
+    },
+    {
+      "id": "cmqtcgpgaxnbho64k",
+      "senderId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "receiverId": "cmqtarcn8enzo657p",
+      "type": "voice",
+      "content": null,
+      "mediaPath": "voice/1782382404356-c5f46232.webm",
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T10:13:24.826Z",
+      "readAt": "2026-06-25T10:16:49.463Z",
+      "expiresAt": "2026-06-25T20:16:49.463Z",
+      "photoExpiresSeconds": null,
+      "photoViewStartedAt": null,
+      "photoExpired": 0
+    },
+    {
+      "id": "cmqtchdp74t2wv6vw",
+      "senderId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "receiverId": "cmqtarcn8enzo657p",
+      "type": "voice",
+      "content": null,
+      "mediaPath": "voice/1782382435724-e59b365d.webm",
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T10:13:56.251Z",
+      "readAt": "2026-06-25T10:16:49.463Z",
+      "expiresAt": "2026-06-25T20:16:49.463Z",
+      "photoExpiresSeconds": null,
+      "photoViewStartedAt": null,
+      "photoExpired": 0
+    },
+    {
+      "id": "cmqtdhxk7sesgjyzm",
+      "senderId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "receiverId": "cmqtarcn8enzo657p",
+      "type": "voice",
+      "content": null,
+      "mediaPath": "voice/1782384141131-aea9dce7.webm",
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T10:42:21.607Z",
+      "readAt": "2026-06-25T10:43:43.820Z",
+      "expiresAt": "2026-06-25T20:43:43.820Z",
+      "photoExpiresSeconds": null,
+      "photoViewStartedAt": null,
+      "photoExpired": 0
+    },
+    {
+      "id": "cmqtdiljccfqpo78y",
+      "senderId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "receiverId": "cmqtarcn8enzo657p",
+      "type": "photo",
+      "content": null,
+      "mediaPath": "photo/1782384172183-5e27c851.png",
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T10:42:52.680Z",
+      "readAt": "2026-06-25T10:43:43.820Z",
+      "expiresAt": "2026-06-25T20:43:43.820Z",
+      "photoExpiresSeconds": 5,
+      "photoViewStartedAt": "2026-06-25T10:43:43.820Z",
+      "photoExpired": 1
+    },
+    {
+      "id": "cmqtdvrfplovoa3pk",
+      "senderId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "receiverId": "cmqspg6f8001aqzwc2jm7h2k1",
+      "type": "voice",
+      "content": null,
+      "mediaPath": "voice/1782384785666-34729825.webm",
+      "callDuration": null,
+      "callKind": null,
+      "callStatus": "completed",
+      "sentAt": "2026-06-25T10:53:06.852Z",
+      "readAt": null,
+      "expiresAt": "2026-06-25T20:53:06.852Z",
+      "photoExpiresSeconds": null,
+      "photoViewStartedAt": null,
+      "photoExpired": 0
+    }
+  ],
+  "sessions": [
+    {
+      "id": "cmqsnrql4000rqzwcb37ry23t",
+      "token": "fa5a4ad30b3545b73671af78354d5f8aebf0ddaecfbe02eddcc3abb4b85c0c22",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782340929112,
+      "expiresAt": 1813876929111,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqsojux10012qzwc5x1b2pwc",
+      "token": "d683882041ca636b5ebfd08d5ac28f7a99ad9ae23b5f39e7fbed74ca56aae10b",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782342241094,
+      "expiresAt": 1813878241093,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqspbf3u0019qzwcj5abyhft",
+      "token": "5e1ba90a65293aa20e80f7931572389681954c1f34beed344d6bdbfff9bfaa09",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782343526970,
+      "expiresAt": 1813879526969,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqsphmmz001iqzwcls0rqdr0",
+      "token": "6f9697adaad5df51df78efe985acd7b484574ac0720b89baabf944a9ab3781b7",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782343816668,
+      "expiresAt": 1813879816667,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqspn578001mqzwc6ox4ghhl",
+      "token": "cc57a35b3e0d77ab23464cd3bd754173678c196e061e0a0fe2b590650c20a9ff",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782344074004,
+      "expiresAt": 1813880074003,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqspskvw001uqzwcq9b1bdfo",
+      "token": "124d9415ac8016415c40464ed50c4c089b504d73794aff654efbca508a3a65a1",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782344327613,
+      "expiresAt": 1813880327611,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqsrwrkq002dqzwcdlunkaha",
+      "token": "a6c813594499b32384445deac47caf9a6131805d502de747fad33d95238914d6",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782347882138,
+      "expiresAt": 1813883882137,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqsrzid1002jqzwcctmkzkip",
+      "token": "bfa35476cfd6f553e0f171f1b0bfc859da085d01f918718e27508d13cd96758f",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782348010166,
+      "expiresAt": 1813884010164,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqsrzsht002lqzwcru8vq5uo",
+      "token": "e4afff583607d1e101a16915391631c2dee1598bd88fa3e24a7f3f698404ae50",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782348023298,
+      "expiresAt": 1813884023297,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqssgizf0031qzwcmfp4jjih",
+      "token": "5ffc681a6bfa15d204e083e9b7b9b30ffdb4e96ee9f541b33c1867115408bb23",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782348804124,
+      "expiresAt": 1813884804122,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqsspaub003eqzwc1tyxb948",
+      "token": "ca5c78fb10e9f2a5b992784546b10aa064b53dab87e152554e3dd3cea5d58d32",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782349213475,
+      "expiresAt": 1813885213474,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqst0re9003rqzwcnwlzxb2i",
+      "token": "bf6330b2774d922198834714bf23f1cd5a7aafddbaddff739393315a01f7792c",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782349748145,
+      "expiresAt": 1813885748144,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqst2xhb003tqzwcgapx42k1",
+      "token": "681f67845d273a5c567f795687422347fd9f5360c4fad773b4f2ed91a373271f",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782349849344,
+      "expiresAt": 1813885849342,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqstmqmp004rqzwclwoelcm3",
+      "token": "dd1161a9e1b22624c2334a62a8e080f5278eea2b0edcfa78ffa7b8ac68729901",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782350773586,
+      "expiresAt": 1813886773585,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqsu2xr8004tqzwclq1lwmvx",
+      "token": "bfefa21a8aa31919d5566fc8d519cc9373076d0096c7fff722cd2efa975c0198",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782351529316,
+      "expiresAt": 1813887529315,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqsv063y004vqzwcp779ka3l",
+      "token": "160ebcd804ad90453526428282b71d1b8747c99b63765b3fdfd8acdb62ce2219",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782353079790,
+      "expiresAt": 1813889079788,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqsys14i004xqzwcgq3i337p",
+      "token": "e358c9280fdefda4a979a078f188de23d0ec15030b33af2380d9d73f2dc09016",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782359418547,
+      "expiresAt": 1813895418546,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqszfapj004zqzwcn8pxt2qb",
+      "token": "6ad9ec77033a7e709a0bc0f5f6b7c6192a2740a3695e35f303806ad1fc70ce4d",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782360504056,
+      "expiresAt": 1813896504055,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqszfunx0052qzwc72a8frnq",
+      "token": "f4f699472533210e1b5f90d728dad8ee7d8985d268a2f0691c2ee4e93b9c4fa0",
+      "userId": "cmqszfunu0050qzwcd9w4nba3",
+      "persistent": 1,
+      "createdAt": 1782360529917,
+      "expiresAt": 1813896529916,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqszroiu0001qzzuygkc8k4a",
+      "token": "0250e53a7df70cae3dcf7883bb73fd67f68ac820754ced2ae620ced905bdfbaa",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782361081830,
+      "expiresAt": 1813897081829,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqszs0x20005qzzu650fr5b1",
+      "token": "2af35a615477b9d0508381756fae024a1b4d8325701e5739ceeb4875d959ad3c",
+      "userId": "cmqszfunu0050qzwcd9w4nba3",
+      "persistent": 1,
+      "createdAt": 1782361097895,
+      "expiresAt": 1813897097894,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqsztpj70007qzzu6bu1tsk8",
+      "token": "2943feeb57f5070b4b3e5a457b655956026f918a60721bc93081ebabacaa14ca",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782361176451,
+      "expiresAt": 1813897176449,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqszw4pf000bqzzurh96ycgo",
+      "token": "b7cdecc737d76dafd440f12e185789f00990cdb347042101485d57c7695f862a",
+      "userId": "cmqszfunu0050qzwcd9w4nba3",
+      "persistent": 1,
+      "createdAt": 1782361289428,
+      "expiresAt": 1813897289427,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqszxh0p000dqzzud3nfkj60",
+      "token": "3b82e1ec8aada04197f5aef8d6b04a6ddb1e052d2e5fb56aaa398c4a7cf23885",
+      "userId": "cmqszfunu0050qzwcd9w4nba3",
+      "persistent": 1,
+      "createdAt": 1782361352041,
+      "expiresAt": 1813897352040,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqszxpvg000fqzzu2p2g22j6",
+      "token": "c12af11707cc9ee4e9dd4fca7fbc9c2a21e56b0307162e27a5c9d811fe22c4dc",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": 1782361363517,
+      "expiresAt": 1813897363516,
+      "deviceInfo": null
+    },
+    {
+      "id": "cmqt0xikw0012qzzu8f92jqff",
+      "token": "ca906d91b46e27df260643a0a3b0d98f4a028482dfce4780fc61bf4a23d1a577",
+      "userId": "cmqt0xikv0010qzzuqafcnqyz",
+      "persistent": 1,
+      "createdAt": 1782363033681,
+      "expiresAt": 1813899033680,
+      "deviceInfo": null
+    },
+    {
+      "id": "smqt9osv2rbw6u8lu",
+      "token": "bd4bb19be127e17409e0b0c1cda5d6c8db6dbdcc02e813634cb309cc8b856cd7",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T08:55:43.646Z",
+      "expiresAt": "2027-06-25T08:55:43.646Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqt9pf8hlqm7e6on",
+      "token": "f0556028b6673e25139e6767992db092ecc777328e4e71a4b111227df54fff84",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T08:56:12.641Z",
+      "expiresAt": "2027-06-25T08:56:12.641Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtalm5vay4vj9xf",
+      "token": "f32813f8c93bf5c2813fbfa020cde464e9efc83de0ec1bc66508887009b06010",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T09:21:14.611Z",
+      "expiresAt": "2027-06-25T09:21:14.611Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtarcqbjpxn3ocr",
+      "token": "5e2b30a49d8a7bf57b274f160ab0296aabb6f244d686d9844598a031828a9539",
+      "userId": "cmqtarcn8enzo657p",
+      "persistent": 1,
+      "createdAt": "2026-06-25T09:25:42.323Z",
+      "expiresAt": "2027-06-25T09:25:42.323Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtatobhbu13ofqu",
+      "token": "52fcd38949321fab4230d7c9804b2c9d154c6a0e7d1263e07573a5f7fac44b1f",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T09:27:30.653Z",
+      "expiresAt": "2027-06-25T09:27:30.653Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtbd8xz7o4n3e8v",
+      "token": "071277d68d8ae0437538673baeec02e97a79d41cfed468dff74a9da18ceb722c",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T09:42:43.847Z",
+      "expiresAt": "2027-06-25T09:42:43.847Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtbn2euq12b07m6",
+      "token": "024982d9595313de2ee4bbd13d1cfb2060cb8d410cabc15c3a4e608b7c3fbb4b",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T09:50:21.942Z",
+      "expiresAt": "2027-06-25T09:50:21.942Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtbnws64ni9l4b6",
+      "token": "268925065f238e9ae1c37223f04cd30c82d5e5828b6020d51ef4dccb7f32246f",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T09:51:01.302Z",
+      "expiresAt": "2027-06-25T09:51:01.302Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtbodaufpwwsklf",
+      "token": "18efae503b39035f351384b9a23fcf1856a1cf3b299cf60673bf209520990bfb",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T09:51:22.710Z",
+      "expiresAt": "2027-06-25T09:51:22.710Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtc2iq85ayi9dwa",
+      "token": "1092ea59ff1f65fcb1d18d54b59c8116024ecec416d20bcdf04d832494431f8e",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T10:02:22.928Z",
+      "expiresAt": "2027-06-25T10:02:22.928Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtc7s6d7xve3gpl",
+      "token": "7332ed5cdd988a8d2f50c8d0ff8a77ac93e3d6252392d9c3e6bdafadb99b2a93",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T10:06:28.453Z",
+      "expiresAt": "2027-06-25T10:06:28.453Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtctgshipswdfoa",
+      "token": "3af51edac8270b44e6528cc16b3335e51404d9cc01349308695105973cc892de",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T10:23:20.129Z",
+      "expiresAt": "2027-06-25T10:23:20.129Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtcxxhxg9uipsg9",
+      "token": "c99b377ee39b6e5798eb0e672cb2189e505983b1033dafa093d57aa4f294a064",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T10:26:48.405Z",
+      "expiresAt": "2027-06-25T10:26:48.405Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtcyy863u1srzk0",
+      "token": "55a02bc205ebc05608613f76acd5f7e612286c3db1a606a3dfa562f74f36aa22",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T10:27:36.006Z",
+      "expiresAt": "2027-06-25T10:27:36.006Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtdf11vtkrq655e",
+      "token": "6ebfe2b9ccf16b87420616b38175e77551ade6b01bc0933fe7228b0d8741d874",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T10:40:06.163Z",
+      "expiresAt": "2027-06-25T10:40:06.163Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtdf4wp6yu8dtdx",
+      "token": "a7643f68d74cb454f981ca661477f0a7202956250ba43d964ddd0ef9534b7cf9",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T10:40:11.161Z",
+      "expiresAt": "2027-06-25T10:40:11.161Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtdhet6f5zgsdn5",
+      "token": "be9cc2e1da40df2d34e74bc48704bb04ef2b301b9227492bba959b3f0e8b9bbd",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T10:41:57.306Z",
+      "expiresAt": "2027-06-25T10:41:57.306Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtdj8wo65iwjyu7",
+      "token": "b06b7ab6991f209723fbb9ec201742d3e0746451981566557eb5be68ee1a8a9a",
+      "userId": "cmqtarcn8enzo657p",
+      "persistent": 1,
+      "createdAt": "2026-06-25T10:43:22.968Z",
+      "expiresAt": "2027-06-25T10:43:22.968Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtdv46fjhr5628v",
+      "token": "1199f100c994ae43d997889f8711f796ae523978c9019cde31619e1746d6e003",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T10:52:36.711Z",
+      "expiresAt": "2027-06-25T10:52:36.711Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqte70tml11wpk2k",
+      "token": "a31ddd7fac078d608cd9794f3aa634464e75ffbf2afefcd3e100e9015641055e",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T11:01:52.234Z",
+      "expiresAt": "2027-06-25T11:01:52.234Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqte8zmt4sv06bby",
+      "token": "4df1070ce31c588cbb23c71f302a040df637c6d974dc6d2435f49ddc839f8df3",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T11:03:24.005Z",
+      "expiresAt": "2027-06-25T11:03:24.005Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqte9jntvu4oos9t",
+      "token": "358e4e3419df97af7c83f0589fd44884472a387b575e17a28d5e72d60da9f304",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T11:03:49.961Z",
+      "expiresAt": "2027-06-25T11:03:49.961Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqte9tymasec8qxs",
+      "token": "ad62233f1b8392671e78fea02849b2d47bc383467c1cd5ef596532de3f970a71",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T11:04:03.310Z",
+      "expiresAt": "2027-06-25T11:04:03.310Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqte9uvg7mtxnc48",
+      "token": "e18e66d26693704873c37ff4c3bab7256fa275f5f08f3505e5044cf8aac704c2",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T11:04:04.492Z",
+      "expiresAt": "2027-06-25T11:04:04.492Z",
+      "deviceInfo": null
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "cmqstcakj004hqzwcca79441c",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": null,
+      "action": "delete",
+      "reason": "verificado_2025 (yaohrs)",
+      "metadata": null,
+      "createdAt": 1782350286211
+    },
+    {
+      "id": "cmqstc90d004fqzwcbq7i6gc8",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": null,
+      "action": "delete",
+      "reason": "prueba_final_2025 (6acx6g)",
+      "metadata": null,
+      "createdAt": 1782350284190
+    },
+    {
+      "id": "cmqstc4of004dqzwcrw0o6izd",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": null,
+      "action": "delete",
+      "reason": "usuariotest_new (ehjv8e)",
+      "metadata": null,
+      "createdAt": 1782350278575
+    },
+    {
+      "id": "cmqstc2vg004bqzwcjk1ih6bq",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": null,
+      "action": "delete",
+      "reason": "usuarionuevo (kujzk2)",
+      "metadata": null,
+      "createdAt": 1782350276237
+    },
+    {
+      "id": "cmqstbzea0049qzwce43qpyoi",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": null,
+      "action": "delete",
+      "reason": "testuser (8j02l6)",
+      "metadata": null,
+      "createdAt": 1782350271731
+    },
+    {
+      "id": "cmqstbx7c0047qzwcg96pjjkt",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": null,
+      "action": "delete",
+      "reason": "probando2 (gvl3es)",
+      "metadata": null,
+      "createdAt": 1782350268889
+    },
+    {
+      "id": "cmqstbp9z0045qzwccev2ltfr",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": null,
+      "action": "delete",
+      "reason": "amigo2 (dy1hdd)",
+      "metadata": null,
+      "createdAt": 1782350258615
+    },
+    {
+      "id": "cmqstbm0c0043qzwcn0r3o7m6",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": null,
+      "action": "delete",
+      "reason": "amigo1 (jt6wdg)",
+      "metadata": null,
+      "createdAt": 1782350254380
+    },
+    {
+      "id": "cmqssk4c0003cqzwchn69hr1o",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "action": "view_conversation",
+      "reason": "Revisó conversación croki0 <-> dy1hdd",
+      "metadata": null,
+      "createdAt": 1782348971761
+    },
+    {
+      "id": "cmqsq6bdd002bqzwcr6587tc7",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": null,
+      "action": "view_conversation",
+      "reason": "Revisó conversación dy1hdd <-> croki0",
+      "metadata": null,
+      "createdAt": 1782344968466
+    },
+    {
+      "id": "cmqsnqktd000pqzwcegleotod",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": null,
+      "action": "view_conversation",
+      "reason": "Revisó conversación jt6wdg <-> dy1hdd",
+      "metadata": null,
+      "createdAt": 1782340874977
+    },
+    {
+      "id": "cmqsnq3tl000nqzwcliuf0tt4",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": null,
+      "action": "promote_admin",
+      "reason": null,
+      "metadata": null,
+      "createdAt": 1782340852953
+    },
+    {
+      "id": "cmqsnq3sq000lqzwco79i9gun",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": null,
+      "action": "block",
+      "reason": "Comportamiento sospechoso",
+      "metadata": null,
+      "createdAt": 1782340852923
+    },
+    {
+      "id": "cmqsnpvj3000jqzwcbh6ads2v",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": null,
+      "action": "view_conversation",
+      "reason": "Revisó conversación jt6wdg <-> dy1hdd",
+      "metadata": null,
+      "createdAt": 1782340842208
+    }
+  ]
+}

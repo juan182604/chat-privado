@@ -1,0 +1,38 @@
+[
+    {
+        "merged": "com.chatprivado.app-merged_res-21:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.chatprivado.app-main-22:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.chatprivado.app-merged_res-21:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "com.chatprivado.app-main-22:/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.chatprivado.app-merged_res-21:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.chatprivado.app-main-22:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.chatprivado.app-merged_res-21:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.chatprivado.app-main-22:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.chatprivado.app-merged_res-21:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "com.chatprivado.app-main-22:/mipmap-xhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.chatprivado.app-merged_res-21:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.chatprivado.app-main-22:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.chatprivado.app-merged_res-21:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "com.chatprivado.app-main-22:/mipmap-xxxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "com.chatprivado.app-merged_res-21:/xml_network_security_config.xml.flat",
+        "source": "com.chatprivado.app-main-22:/xml/network_security_config.xml"
+    },
+    {
+        "merged": "com.chatprivado.app-merged_res-21:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "com.chatprivado.app-main-22:/mipmap-xxhdpi/ic_launcher_round.png"
+    }
+]

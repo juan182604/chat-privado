@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Production
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment files (NEVER commit these)
+.env
+.env.local
+.env.production
+.env.production.local
+
+# Database (local SQLite)
+db/*.db
+db/*.db-journal
+
+# Uploads (in production these go to R2)
+public/uploads/photo/*
+public/uploads/voice/*
+!public/uploads/photo/.gitkeep
+!public/uploads/voice/.gitkeep
+
+# APK builds (too large for git, deploy separately)
+public/downloads/*.apk
+
+# Android build artifacts
+android-app/app/build/
+android-app/.gradle/
+android-app/build/
+android-app/local.properties
+
+# Logs
+*.log
+dev.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Prisma
+prisma/migrations/dev.db*
+
+# Mini-services logs
+mini-services/chat-service/*.log
+
+# Scripts
+scripts/test-*.ts
+download/backup/*.tar.gz
+download/backup/*.apk
+download/backup/README-BACKUP.md

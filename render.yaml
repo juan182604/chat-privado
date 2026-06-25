@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: chat-privado
+    runtime: node
+    plan: free
+    buildCommand: bash render-build.sh
+    startCommand: bun run start || npx next start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_AUTH_TOKEN
+        sync: false
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET
+        value: chat-privado-uploads
+      - key: NODE_ENV
+        value: production
+      - key: NEXTAUTH_SECRET
+        sync: false
+    healthCheckPath: /api/auth/me
+    autoDeploy: true

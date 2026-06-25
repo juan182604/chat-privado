@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  uniqueId    String   @unique
+  username    String   @unique
+  firstName   String
+  lastName    String
+  displayName String?  // Custom name shown in chats (NULL = use firstName + lastName)
+  pinHash     String
+  role        String   @default("user")
+  blocked     Boolean  @default(false)
+  blockReason String?
+  blockedAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sentMessages     Message[]  @relation("MessageSender")
+  receivedMessages Message[]  @relation("MessageReceiver")
+  friendsInitiated Friendship[] @relation("FriendInitiator")
+  friendsReceived  Friendship[] @relation("FriendTarget")
+  sessions         Session[]
+  auditActions     AuditLog[]  @relation("AuditActor")
+  auditTargets     AuditLog[]  @relation("AuditTarget")
+}
+
+model Friendship {
+  id         String   @id @default(cuid())
+  userId     String
+  friendId   String
+  status     String   @default("accepted")
+  createdAt  DateTime @default(now())
+
+  user   User @relation("FriendInitiator", fields: [userId], references: [id], onDelete: Cascade)
+  friend User @relation("FriendTarget", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+}
+
+model Message {
+  id           String    @id @default(cuid())
+  senderId     String
+  receiverId   String
+  type         String
+  content      String?
+  mediaPath    String?
+  callDuration Int?
+  callKind     String?
+  callStatus   String?
+  sentAt       DateTime  @default(now())
+  readAt       DateTime?
+  expiresAt    DateTime
+  photoExpiresSeconds Int?
+  photoViewStartedAt  DateTime?
+  photoExpired        Boolean   @default(false)
+
+  sender   User @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("MessageReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([receiverId, readAt])
+  @@index([expiresAt])
+  @@index([senderId, receiverId])
+  @@index([photoExpired])
+}
+
+model Session {
+  id         String   @id @default(cuid())
+  token      String   @unique
+  userId     String
+  persistent Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+  deviceInfo String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  actorId     String
+  targetUserId String?
+  action      String
+  reason      String?
+  metadata    String?
+  createdAt   DateTime @default(now())
+
+  actor  User  @relation("AuditActor", fields: [actorId], references: [id], onDelete: Cascade)
+  target User? @relation("AuditTarget", fields: [targetUserId], references: [id], onDelete: SetNull)
+
+  @@index([actorId])
+  @@index([targetUserId])
+}
