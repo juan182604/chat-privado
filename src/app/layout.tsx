@@ -38,7 +38,6 @@ export const metadata: Metadata = {
   },
 };
 
-// viewport-fit=cover is REQUIRED for env(safe-area-inset-*) to work in PWA mode
 export const viewport: Viewport = {
   themeColor: "#10b981",
   width: "device-width",
@@ -59,49 +58,44 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Chat Privado" />
-        {/* Use default status bar style so the status bar has a solid background */}
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
         <link rel="shortcut icon" href="/favicon.ico" />
         <style dangerouslySetInnerHTML={{ __html: `
-          :root {
-            --safe-top: env(safe-area-inset-top, 0px);
-            --safe-bottom: env(safe-area-inset-bottom, 0px);
-            --safe-left: env(safe-area-inset-left, 0px);
-            --safe-right: env(safe-area-inset-right, 0px);
-          }
-          html {
-            box-sizing: border-box;
-          }
-          *, *::before, *::after {
-            box-sizing: inherit;
-          }
-          body {
-            margin: 0 !important;
-            padding: 0 !important;
-            background: #0a0a0a;
-          }
-          /* App container: fixed full-screen with safe area padding */
-          #app-root {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            padding-top: calc(var(--safe-top) + 20px);
-            padding-bottom: calc(var(--safe-bottom) + 20px);
-            padding-left: calc(var(--safe-left) + 8px);
-            padding-right: calc(var(--safe-right) + 8px);
+          * { box-sizing: border-box; }
+          html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
+            background: #000;
+          }
+          /* The app container uses percentage-based sizing that works
+             reliably on iOS PWA. 92vh leaves ~8% for safe areas. */
+          #app-shell {
+            width: 100%;
+            height: 92vh;
+            margin: 0 auto;
+            padding: 0;
+            background: #0a0a0a;
+            overflow: hidden;
+            position: relative;
+          }
+          @media (max-width: 768px) {
+            #app-shell {
+              height: 91vh;
+            }
           }
         `}} />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-950 text-zinc-100`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{ background: '#000' }}
       >
-        <div id="app-root">
+        <div id="app-shell">
           {children}
         </div>
         <Toaster />

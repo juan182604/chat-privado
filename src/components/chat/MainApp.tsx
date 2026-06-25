@@ -18,17 +18,45 @@ export function MainApp() {
   const activeChatPeerId = useAppStore((s) => s.activeChatPeerId)
   const setActiveChat = useAppStore((s) => s.setActiveChat)
 
-  // Wire up realtime polling (replaces socket.io)
+  // Wire up realtime polling
   useRealtimePolling()
 
-  // Listen for chat refresh events
+  // Swipe-to-go-back gesture: swipe right on the left edge to exit chat
   useEffect(() => {
-    const handler = () => {
-      // Trigger refresh by changing tab to chats momentarily? Actually just emit; ChatList polls itself.
+    if (!activeChatPeerId) return
+    let startX = 0
+    let startY = 0
+    let isTracking = false
+
+    const onTouchStart = (e: TouchEvent) => {
+      // Only track if the touch starts in the left 40px of the screen
+      if (e.touches[0].clientX < 40) {
+        startX = e.touches[0].clientX
+        startY = e.touches[0].clientY
+        isTracking = true
+      }
     }
-    window.addEventListener('nx:refresh-chats', handler)
-    return () => window.removeEventListener('nx:refresh-chats', handler)
-  }, [])
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (!isTracking) return
+      const endX = e.changedTouches[0].clientX
+      const endY = e.changedTouches[0].clientY
+      const dx = endX - startX
+      const dy = Math.abs(endY - startY)
+      // Swipe right: dx > 80 and horizontal movement > vertical
+      if (dx > 80 && dx > dy * 2) {
+        setActiveChat(null)
+      }
+      isTracking = false
+    }
+
+    window.addEventListener('touchstart', onTouchStart, { passive: true })
+    window.addEventListener('touchend', onTouchEnd, { passive: true })
+    return () => {
+      window.removeEventListener('touchstart', onTouchStart)
+      window.removeEventListener('touchend', onTouchEnd)
+    }
+  }, [activeChatPeerId, setActiveChat])
 
   if (!user) return null
 
@@ -36,7 +64,10 @@ export function MainApp() {
   const inChat = tab === 'chats' && activeChatPeerId
 
   return (
-    <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 max-w-2xl mx-auto relative">
+    <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 relative">
+      {/* Top bar with extra padding for safe area */}
+      <div className="shrink-0" style={{ paddingTop: 'env(safe-area-inset-top)' }} />
+
       <div className="flex-1 overflow-hidden relative">
         {inChat ? (
           <ChatView peerId={activeChatPeerId!} onBack={() => setActiveChat(null)} />
@@ -53,7 +84,7 @@ export function MainApp() {
 
       {/* Bottom nav (hidden when inside a chat) */}
       {!inChat && (
-        <nav className="border-t border-zinc-800/60 bg-zinc-950 grid grid-cols-4 safe-bottom">
+        <nav className="border-t border-zinc-800/60 bg-zinc-950 grid grid-cols-4 shrink-0" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 4px)' }}>
           <TabButton
             active={tab === 'chats'}
             onClick={() => setTab('chats')}
@@ -92,7 +123,7 @@ export function MainApp() {
         </nav>
       )}
 
-      {/* Call overlay (renders on top when there's an active call) */}
+      {/* Call overlay */}
       <CallOverlay />
     </div>
   )

@@ -1,7 +1,7 @@
 // Service Worker for Chat Privado PWA
 // Enables offline use + makes the app installable on Android/iOS home screens.
 
-const CACHE_NAME = 'chat-privado-v5'
+const CACHE_NAME = 'chat-privado-v6'
 const PRECACHE_URLS = [
   '/',
   '/manifest.json',
