@@ -1,5 +1,5 @@
 {
-  "_exportedAt": "2026-06-25T11:04:21.869Z",
+  "_exportedAt": "2026-06-25T11:54:45.015Z",
   "_version": "1.0",
   "users": [
     {
@@ -55,19 +55,6 @@
       "updatedAt": 1782360529915
     },
     {
-      "id": "cmqt0xikv0010qzzuqafcnqyz",
-      "uniqueId": "fzv2do",
-      "username": "cayo",
-      "firstName": "hjhj",
-      "lastName": "hjhjh",
-      "role": "user",
-      "blocked": 0,
-      "blockReason": null,
-      "blockedAt": null,
-      "createdAt": 1782363033679,
-      "updatedAt": 1782363033679
-    },
-    {
       "id": "cmqtarcn8enzo657p",
       "uniqueId": "yl4nyt",
       "username": "lobo",
@@ -78,7 +65,7 @@
       "blockReason": null,
       "blockedAt": null,
       "createdAt": "2026-06-25T09:25:42.212Z",
-      "updatedAt": "2026-06-25T09:25:42.212Z"
+      "updatedAt": "2026-06-25T11:52:45.401Z"
     }
   ],
   "friendships": [
@@ -154,40 +141,6 @@
     }
   ],
   "messages": [
-    {
-      "id": "cmqtanjzfawp1iocn",
-      "senderId": "cmqspg6f8001aqzwc2jm7h2k1",
-      "receiverId": "cmqsn9n9q0000qz3t2b1cgn23",
-      "type": "text",
-      "content": "hola",
-      "mediaPath": null,
-      "callDuration": null,
-      "callKind": null,
-      "callStatus": "completed",
-      "sentAt": "2026-06-25T09:22:45.099Z",
-      "readAt": "2026-06-25T09:22:45.806Z",
-      "expiresAt": "2026-06-25T19:22:45.806Z",
-      "photoExpiresSeconds": null,
-      "photoViewStartedAt": null,
-      "photoExpired": 0
-    },
-    {
-      "id": "cmqtaoevmn0r5wc81",
-      "senderId": "cmqspg6f8001aqzwc2jm7h2k1",
-      "receiverId": "cmqsn9n9q0000qz3t2b1cgn23",
-      "type": "text",
-      "content": "dfdgd",
-      "mediaPath": null,
-      "callDuration": null,
-      "callKind": null,
-      "callStatus": "completed",
-      "sentAt": "2026-06-25T09:23:25.138Z",
-      "readAt": "2026-06-25T09:23:29.416Z",
-      "expiresAt": "2026-06-25T19:23:29.416Z",
-      "photoExpiresSeconds": null,
-      "photoViewStartedAt": null,
-      "photoExpired": 0
-    },
     {
       "id": "cmqtaolge8uqbv0xu",
       "senderId": "cmqsn9n9q0000qz3t2b1cgn23",
@@ -654,15 +607,6 @@
       "deviceInfo": null
     },
     {
-      "id": "cmqt0xikw0012qzzu8f92jqff",
-      "token": "ca906d91b46e27df260643a0a3b0d98f4a028482dfce4780fc61bf4a23d1a577",
-      "userId": "cmqt0xikv0010qzzuqafcnqyz",
-      "persistent": 1,
-      "createdAt": 1782363033681,
-      "expiresAt": 1813899033680,
-      "deviceInfo": null
-    },
-    {
       "id": "smqt9osv2rbw6u8lu",
       "token": "bd4bb19be127e17409e0b0c1cda5d6c8db6dbdcc02e813634cb309cc8b856cd7",
       "userId": "cmqsn9n9q0000qz3t2b1cgn23",
@@ -687,15 +631,6 @@
       "persistent": 1,
       "createdAt": "2026-06-25T09:21:14.611Z",
       "expiresAt": "2027-06-25T09:21:14.611Z",
-      "deviceInfo": null
-    },
-    {
-      "id": "smqtarcqbjpxn3ocr",
-      "token": "5e2b30a49d8a7bf57b274f160ab0296aabb6f244d686d9844598a031828a9539",
-      "userId": "cmqtarcn8enzo657p",
-      "persistent": 1,
-      "createdAt": "2026-06-25T09:25:42.323Z",
-      "expiresAt": "2027-06-25T09:25:42.323Z",
       "deviceInfo": null
     },
     {
@@ -816,15 +751,6 @@
       "deviceInfo": null
     },
     {
-      "id": "smqtdj8wo65iwjyu7",
-      "token": "b06b7ab6991f209723fbb9ec201742d3e0746451981566557eb5be68ee1a8a9a",
-      "userId": "cmqtarcn8enzo657p",
-      "persistent": 1,
-      "createdAt": "2026-06-25T10:43:22.968Z",
-      "expiresAt": "2027-06-25T10:43:22.968Z",
-      "deviceInfo": null
-    },
-    {
       "id": "smqtdv46fjhr5628v",
       "token": "1199f100c994ae43d997889f8711f796ae523978c9019cde31619e1746d6e003",
       "userId": "cmqsn9n9q0000qz3t2b1cgn23",
@@ -877,9 +803,108 @@
       "createdAt": "2026-06-25T11:04:04.492Z",
       "expiresAt": "2027-06-25T11:04:04.492Z",
       "deviceInfo": null
+    },
+    {
+      "id": "smqtfa2igec9bnvsj",
+      "token": "9d083ea58ba0eda5fbac611d6181390e53688e10a87a991391df3dcc3c01524a",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T11:32:14.008Z",
+      "expiresAt": "2027-06-25T11:32:14.008Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtfognixl31yz71",
+      "token": "bd3feeb233973c029de918ef81850b2a45ea321251ffc1aaaef3c86505595e0b",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T11:43:25.518Z",
+      "expiresAt": "2027-06-25T11:43:25.518Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtfuvdetlqpw8tg",
+      "token": "cf6c202d118eda3e772ad392607e338d3b6e4ea6342e289985f8d005f0058806",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T11:48:24.530Z",
+      "expiresAt": "2027-06-25T11:48:24.530Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtfv1s9fyjsw9sw",
+      "token": "6565812bd99750ea714be414e1282b68f6bdd9505af6969c407dbeb440716c6a",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T11:48:32.841Z",
+      "expiresAt": "2027-06-25T11:48:32.841Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtfy59k9fcoby5a",
+      "token": "9b23b3b78c0d0e53694700bb10cbfcd64064e2c9547de1fe98e2089e81d89bae",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T11:50:57.320Z",
+      "expiresAt": "2027-06-25T11:50:57.320Z",
+      "deviceInfo": null
+    },
+    {
+      "id": "smqtfydtf758zucig",
+      "token": "fe7f86033d364c70dba917fdcc14fb259de0ad80d3c822535751928d63d5ca3c",
+      "userId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "persistent": 1,
+      "createdAt": "2026-06-25T11:51:08.403Z",
+      "expiresAt": "2027-06-25T11:51:08.403Z",
+      "deviceInfo": null
     }
   ],
   "auditLogs": [
+    {
+      "id": "cmqtg0gnt8f4ho6d5",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": "cmqtarcn8enzo657p",
+      "action": "unblock",
+      "reason": null,
+      "metadata": null,
+      "createdAt": "2026-06-25T11:52:45.401Z"
+    },
+    {
+      "id": "cmqtfz3feb7wgdezm",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": "cmqtarcn8enzo657p",
+      "action": "block",
+      "reason": "test de bloqueo",
+      "metadata": null,
+      "createdAt": "2026-06-25T11:51:41.594Z"
+    },
+    {
+      "id": "cmqtfyozalk6yjizy",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": "cmqspg6f8001aqzwc2jm7h2k1",
+      "action": "delete_message",
+      "reason": "Admin eliminó mensaje cmqtaoevmn0r5wc81 (text)",
+      "metadata": null,
+      "createdAt": "2026-06-25T11:51:22.870Z"
+    },
+    {
+      "id": "cmqtfy6dwdkrct3k5",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": "cmqspg6f8001aqzwc2jm7h2k1",
+      "action": "delete_message",
+      "reason": "Admin eliminó mensaje cmqtanjzfawp1iocn (text)",
+      "metadata": null,
+      "createdAt": "2026-06-25T11:50:58.772Z"
+    },
+    {
+      "id": "cmqtev11j9o3295q6",
+      "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
+      "targetUserId": null,
+      "action": "delete",
+      "reason": "cayo (fzv2do)",
+      "metadata": null,
+      "createdAt": "2026-06-25T11:20:32.263Z"
+    },
     {
       "id": "cmqstcakj004hqzwcca79441c",
       "actorId": "cmqsn9n9q0000qz3t2b1cgn23",
