@@ -15,26 +15,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Chat Privado — ID-based, auto-borrado 10h",
-  description: "Chat privado estilo WhatsApp con IDs únicos de 6 caracteres, llamadas, fotos y notas de voz. Auto-borrado a las 10 horas.",
-  keywords: ["chat", "privado", "mensajería", "auto-delete", "ID"],
-  authors: [{ name: "Croki" }],
+  title: "Chat Privado",
+  description: "Chat privado estilo WhatsApp con IDs únicos.",
   manifest: "/manifest.json",
   icons: {
     icon: [
       { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon.ico", sizes: "any" },
     ],
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   appleWebApp: {
     capable: true,
     title: "Chat Privado",
     statusBarStyle: "default",
-    startupImage: ["/icon-512.png"],
   },
 };
 
@@ -49,9 +43,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
@@ -60,44 +52,32 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Chat Privado" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
-        <link rel="shortcut icon" href="/favicon.ico" />
         <style dangerouslySetInnerHTML={{ __html: `
-          * { box-sizing: border-box; }
+          * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
           html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #000;
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background: #000;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
           }
-          /* The app container uses percentage-based sizing that works
-             reliably on iOS PWA. 92vh leaves ~8% for safe areas. */
+          /* FIXED PIXEL PADDING — works on ALL iPhones regardless of env() support.
+             Notch iPhones need ~50px top, ~34px bottom.
+             We use max() so it works on both notch and non-notch phones. */
           #app-shell {
             width: 100%;
-            height: 92vh;
-            margin: 0 auto;
-            padding: 0;
+            height: 100%;
+            padding-top: max(50px, env(safe-area-inset-top, 50px));
+            padding-bottom: max(40px, env(safe-area-inset-bottom, 40px));
+            padding-left: max(8px, env(safe-area-inset-left, 8px));
+            padding-right: max(8px, env(safe-area-inset-right, 8px));
             background: #0a0a0a;
             overflow: hidden;
-            position: relative;
-          }
-          @media (max-width: 768px) {
-            #app-shell {
-              height: 91vh;
-            }
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
           }
         `}} />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        style={{ background: '#000' }}
-      >
-        <div id="app-shell">
-          {children}
-        </div>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} style={{ background: '#000' }}>
+        <div id="app-shell">{children}</div>
         <Toaster />
         <ServiceWorkerRegister />
       </body>
