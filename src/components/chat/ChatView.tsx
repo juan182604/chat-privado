@@ -10,6 +10,8 @@ import { ArrowLeft, Phone, Video, Send, Paperclip, Mic, ImageIcon, X, Clock, Tim
 // null = "sin límite" (follows the normal 10-hour rule)
 const PHOTO_TIMER_PRESETS: { label: string; value: number | null }[] = [
   { label: 'Sin límite', value: null },
+  { label: '1s', value: 1 },
+  { label: '2s', value: 2 },
   { label: '5s', value: 5 },
   { label: '10s', value: 10 },
   { label: '30s', value: 30 },
@@ -397,7 +399,7 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
                   la foto se queda esperando. Cuando se acaba el tiempo, la foto desaparece
                   del chat de ambos. En el panel admin se mantiene hasta las 10h.
                 </p>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-5 gap-2">
                   {PHOTO_TIMER_PRESETS.map((p) => (
                     <button
                       key={p.label}
