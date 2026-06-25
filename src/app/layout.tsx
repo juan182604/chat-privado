@@ -38,13 +38,17 @@ export const metadata: Metadata = {
   },
 };
 
+// Use viewport-fit=contain instead of cover so the content does NOT go
+// under the notch / home indicator. This makes the app appear slightly
+// smaller (with black bars at the edges) but guarantees all buttons are
+// fully tappable on iPhone.
 export const viewport: Viewport = {
   themeColor: "#10b981",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  viewportFit: "cover",
+  viewportFit: "contain",
 };
 
 export default function RootLayout({
@@ -55,7 +59,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
-        {/* iOS PWA meta tags (Next.js appleWebApp covers most, but these ensure compatibility) */}
+        {/* iOS PWA meta tags */}
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Chat Privado" />
@@ -64,6 +68,32 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
         <link rel="shortcut icon" href="/favicon.ico" />
+        {/* Extra safe area padding via CSS variables */}
+        <style dangerouslySetInnerHTML={{ __html: `
+          :root {
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
+          }
+          html, body {
+            box-sizing: border-box;
+          }
+          body {
+            padding-top: calc(var(--safe-top) + 16px) !important;
+            padding-bottom: calc(var(--safe-bottom) + 16px) !important;
+            padding-left: calc(var(--safe-left) + 8px) !important;
+            padding-right: calc(var(--safe-right) + 8px) !important;
+          }
+          header {
+            padding-top: calc(var(--safe-top) + 12px) !important;
+            margin-top: 0 !important;
+          }
+          footer, nav {
+            padding-bottom: calc(var(--safe-bottom) + 10px) !important;
+            margin-bottom: 0 !important;
+          }
+        `}} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-950 text-zinc-100`}

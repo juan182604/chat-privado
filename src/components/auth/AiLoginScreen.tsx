@@ -86,10 +86,10 @@ export function AiLoginScreen() {
     <div
       className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col"
       style={{
-        paddingTop: 'calc(env(safe-area-inset-top) + 12px)',
-        paddingBottom: 'calc(env(safe-area-inset-bottom) + 12px)',
-        paddingLeft: 'calc(env(safe-area-inset-left) + 4px)',
-        paddingRight: 'calc(env(safe-area-inset-right) + 4px)',
+        paddingTop: 'calc(env(safe-area-inset-top) + 16px)',
+        paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)',
+        paddingLeft: 'calc(env(safe-area-inset-left) + 8px)',
+        paddingRight: 'calc(env(safe-area-inset-right) + 8px)',
       }}
     >
       {/* Header */}
