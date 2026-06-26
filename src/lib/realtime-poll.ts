@@ -20,6 +20,7 @@ export function useRealtimePolling() {
 
   useEffect(() => {
     if (!user) return
+    console.log("[poll] starting polling for user", user.username)
     const poll = async () => {
       if (inFlightRef.current) return
       inFlightRef.current = true
