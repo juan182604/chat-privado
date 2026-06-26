@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useAppStore } from '@/lib/store'
-import { Search, MessageCircle, UserPlus } from 'lucide-react'
+import { Search, MessageCircle, UserPlus, RefreshCw } from 'lucide-react'
 import { AddContactDialog } from '@/components/chat/AddContactDialog'
 
 export function ChatList({ onOpenChat }: { onOpenChat: (peerId: string) => void }) {
@@ -10,21 +10,32 @@ export function ChatList({ onOpenChat }: { onOpenChat: (peerId: string) => void 
   const [chats, setChats] = useState<any[]>([])
   const [filter, setFilter] = useState('')
   const [addOpen, setAddOpen] = useState(false)
+  const [loaded, setLoaded] = useState(false)
 
-  // Fetch chats directly
-  const loadChats = useCallback(async () => {
+  const loadChats = async () => {
     try {
-      const res = await fetch('/api/messages/chats')
+      const res = await fetch('/api/messages/chats', { credentials: 'include' })
       const data = await res.json()
-      if (Array.isArray(data.chats)) setChats(data.chats)
+      if (Array.isArray(data.chats)) {
+        setChats(data.chats)
+        setLoaded(true)
+      }
     } catch {}
-  }, [])
+  }
 
+  // Load on mount AND on interval
   useEffect(() => {
     loadChats()
     const t = setInterval(loadChats, 3000)
     return () => clearInterval(t)
-  }, [loadChats])
+  }, [])
+
+  // Also listen for custom event
+  useEffect(() => {
+    const handler = () => loadChats()
+    window.addEventListener('nx:refresh-chats', handler)
+    return () => window.removeEventListener('nx:refresh-chats', handler)
+  }, [])
 
   const filtered = chats.filter((c) =>
     !filter || c.peer.username.includes(filter.toLowerCase()) || c.peer.uniqueId.includes(filter.toLowerCase()),
@@ -38,9 +49,14 @@ export function ChatList({ onOpenChat }: { onOpenChat: (peerId: string) => void 
             <h1 className="text-xl font-bold text-zinc-100">Chats</h1>
             <p className="text-[11px] text-zinc-500">Tu ID: <span className="font-mono text-emerald-400">{user?.uniqueId}</span></p>
           </div>
-          <button onClick={() => setAddOpen(true)} className="w-10 h-10 rounded-full bg-emerald-600 hover:bg-emerald-500 flex items-center justify-center" title="Agregar contacto">
-            <UserPlus className="w-5 h-5 text-white" />
-          </button>
+          <div className="flex gap-2">
+            <button onClick={loadChats} className="w-10 h-10 rounded-full bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center" title="Actualizar">
+              <RefreshCw className="w-4 h-4 text-zinc-300" />
+            </button>
+            <button onClick={() => setAddOpen(true)} className="w-10 h-10 rounded-full bg-emerald-600 hover:bg-emerald-500 flex items-center justify-center" title="Agregar contacto">
+              <UserPlus className="w-5 h-5 text-white" />
+            </button>
+          </div>
         </div>
         <div className="flex items-center gap-2 bg-zinc-800/70 border border-zinc-700 rounded-full px-3 py-2">
           <Search className="w-4 h-4 text-zinc-500" />
@@ -51,7 +67,7 @@ export function ChatList({ onOpenChat }: { onOpenChat: (peerId: string) => void 
         {filtered.length === 0 ? (
           <div className="p-8 text-center text-sm text-zinc-500">
             <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
-            {chats.length === 0 ? 'No tienes chats. Agrega un contacto con el botón +.' : 'Sin resultados.'}
+            {loaded ? 'No tienes chats. Agrega un contacto con el botón +.' : 'Cargando…'}
           </div>
         ) : (
           <ul>
@@ -64,7 +80,7 @@ export function ChatList({ onOpenChat }: { onOpenChat: (peerId: string) => void 
                     <span className="text-[11px] text-zinc-500 shrink-0">{c.lastMessage ? new Date(c.lastMessage.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</span>
                   </div>
                   <div className="flex items-center justify-between gap-2 mt-0.5">
-                    <p className="text-sm text-zinc-400 truncate">{c.lastMessage ? (c.lastMessage.fromMe ? 'Tú: ' : '') + (c.lastMessage.type === 'text' ? c.lastMessage.content : c.lastMessage.type === 'voice' ? '🎙️ Nota de voz' : c.lastMessage.type === 'photo' ? '📷 Foto' : '📞 Llamada') : 'Sin mensajes'}</p>
+                    <p className="text-sm text-zinc-400 truncate">{c.lastMessage ? (c.lastMessage.fromMe ? 'Tú: ' : '') + (c.lastMessage.type === 'text' ? c.lastMessage.content : c.lastMessage.type === 'voice' ? '🎙️' : c.lastMessage.type === 'photo' ? '📷' : '📞') : 'Sin mensajes'}</p>
                     {c.unread > 0 && <span className="bg-emerald-500 text-zinc-950 text-[11px] font-bold rounded-full min-w-5 h-5 px-1.5 flex items-center justify-center shrink-0">{c.unread}</span>}
                   </div>
                 </div>
