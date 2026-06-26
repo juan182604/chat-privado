@@ -10,31 +10,29 @@ export function ChatList({ onOpenChat }: { onOpenChat: (peerId: string) => void 
   const [chats, setChats] = useState<any[]>([])
   const [filter, setFilter] = useState('')
   const [addOpen, setAddOpen] = useState(false)
-  const [loaded, setLoaded] = useState(false)
+  const [status, setStatus] = useState('Cargando…')
 
   const loadChats = async () => {
+    setStatus('Cargando…')
     try {
-      const res = await fetch('/api/messages/chats', { credentials: 'include' })
+      const res = await fetch('/api/messages/chats')
+      if (!res.ok) { setStatus('Error: ' + res.status); return }
       const data = await res.json()
       if (Array.isArray(data.chats)) {
         setChats(data.chats)
-        setLoaded(true)
+        setStatus(data.chats.length === 0 ? 'No tienes chats' : '')
+      } else {
+        setStatus('Error: formato inválido')
       }
-    } catch {}
+    } catch (e: any) {
+      setStatus('Error: ' + (e.message || 'desconocido'))
+    }
   }
 
-  // Load on mount AND on interval
   useEffect(() => {
-    setTimeout(loadChats, 1000)
-    const t = setInterval(loadChats, 3000)
+    setTimeout(loadChats, 500)
+    const t = setInterval(loadChats, 5000)
     return () => clearInterval(t)
-  }, [])
-
-  // Also listen for custom event
-  useEffect(() => {
-    const handler = () => setTimeout(loadChats, 1000)
-    window.addEventListener('nx:refresh-chats', handler)
-    return () => window.removeEventListener('nx:refresh-chats', handler)
   }, [])
 
   const filtered = chats.filter((c) =>
@@ -67,7 +65,7 @@ export function ChatList({ onOpenChat }: { onOpenChat: (peerId: string) => void 
         {filtered.length === 0 ? (
           <div className="p-8 text-center text-sm text-zinc-500">
             <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
-            {loaded ? 'No tienes chats. Agrega un contacto con el botón +.' : 'Cargando…'}
+            {status}
           </div>
         ) : (
           <ul>
