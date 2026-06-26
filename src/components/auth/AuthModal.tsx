@@ -52,18 +52,15 @@ export function AuthModal() {
       const data = await res.json()
       if (!res.ok) {
         setError(data.error || 'Error al iniciar sesión')
+        setLoading(false)
         return
       }
       setUser(data.user)
       setOpen(false)
       setView({ kind: 'app' })
+      // Reload to load the app with the session cookie
       window.location.reload()
-      window.location.reload()
-      // No reload — the Zustand store already has the user, the page will
-      // re-render from <AiLoginScreen> to <MainApp> immediately.
-      // Reloading was causing the session lookup to race with the cookie
-      // being set, kicking the user back to the AI screen.
-    } finally {
+    } catch {
       setLoading(false)
     }
   }
@@ -96,8 +93,7 @@ export function AuthModal() {
       setOpen(false)
       setView({ kind: 'app' })
       window.location.reload()
-      window.location.reload()
-    } finally {
+    } catch {
       setLoading(false)
     }
   }
