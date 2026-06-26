@@ -538,7 +538,7 @@ function usePhotoExpiryRefresher(peerId: string, setMessages: (id: string, msgs:
  */
 function PhotoTimerBadge({ msg }: { msg: ChatMessage }) {
   const [remaining, setRemaining] = useState<number | null>(() => {
-    if (!msg.photoExpiresSeconds || !msg.photoViewStartedAt) return null
+    if [msgphotoExpiresSeconds || !msg.photoViewStartedAt) return null
     const startedAt = new Date(msg.photoViewStartedAt).getTime()
     const expiresAt = startedAt + msg.photoExpiresSeconds * 1000
     return Math.max(0, Math.floor((expiresAt - Date.now()) / 1000))
