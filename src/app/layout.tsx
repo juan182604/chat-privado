@@ -38,7 +38,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <AppProvider>
           {children}
         </AppProvider>
-        <Toaster />
         <ServiceWorkerRegister />
       </body>
     </html>
