@@ -52,39 +52,42 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <style dangerouslySetInnerHTML={{ __html: `
-          * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+          * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
           html, body {
-            margin: 0; padding: 0; width: 100%;
+            width: 100%; height: 100%;
             overflow: hidden; background: #000;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
           }
-          /* 92vh — la app ocupa 92% de la pantalla, 4% libre arriba y abajo */
-          #app-shell {
+          /* PADDING DIRECTO EN BODY — sin #app-shell, sin vh tricks.
+             60px arriba y 50px abajo garantiza espacio en TODOS los iPhones.
+             El contenido se reduce automáticamente. */
+          body {
+            padding-top: 60px !important;
+            padding-bottom: 50px !important;
+            padding-left: 6px !important;
+            padding-right: 6px !important;
+          }
+          /* El contenido ocupa el 100% del espacio restante */
+          #app-content {
             width: 100%;
-            height: 92vh;
-            margin: 4vh auto;
+            height: 100%;
             background: #0a0a0a;
             overflow: hidden;
             position: relative;
-            border-radius: 0;
           }
         `}} />
-        {/* Script que ELIMINA cualquier service worker viejo */}
+        {/* ELIMINAR service workers viejos */}
         <script dangerouslySetInnerHTML={{ __html: `
           if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(registrations) {
-              for(var registration of registrations) {
-                registration.unregister();
-              }
-            });
-            caches.keys().then(function(names) {
-              for(var name of names) caches.delete(name);
-            });
+            navigator.serviceWorker.getRegistrations().then(function(r) { r.forEach(function(x) { x.unregister(); }); });
+            caches.keys().then(function(n) { n.forEach(function(name) { caches.delete(name); }); });
           }
         `}} />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} style={{ background: '#000' }}>
-        <div id="app-shell">{children}</div>
+        <div id="app-content" style={{ width: '100%', height: '100%', background: '#0a0a0a', overflow: 'hidden', position: 'relative' }}>
+          {children}
+        </div>
         <Toaster />
       </body>
     </html>

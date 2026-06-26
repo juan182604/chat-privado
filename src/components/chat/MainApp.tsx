@@ -65,8 +65,6 @@ export function MainApp() {
 
   return (
     <div className="flex flex-col h-full bg-zinc-950 text-zinc-100 relative">
-      {/* Top bar with extra padding for safe area */}
-      <div className="shrink-0" style={{ paddingTop: 'env(safe-area-inset-top)' }} />
 
       <div className="flex-1 overflow-hidden relative">
         {inChat ? (
