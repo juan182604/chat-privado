@@ -449,41 +449,44 @@ function MessageBubble({ msg, myId }: { msg: ChatMessage; myId: string }) {
   }
 
   return (
-    <div className={`flex ${msg.fromMe ? 'justify-end' : 'justify-start'}`}>
-      <div
-        className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm leading-relaxed ${
-          msg.fromMe ? 'bg-emerald-600 text-white rounded-br-sm' : 'bg-zinc-800 text-zinc-100 rounded-bl-sm'
-        }`}
-      >
-        {msg.type === 'text' && <p className="whitespace-pre-wrap break-words">{msg.content}</p>}
+    <>
+      <div className={`flex ${msg.fromMe ? 'justify-end' : 'justify-start'}`}>
+        <div
+          className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm leading-relaxed ${
+            msg.fromMe ? 'bg-emerald-600 text-white rounded-br-sm' : 'bg-zinc-800 text-zinc-100 rounded-bl-sm'
+          }`}
+        >
+          {msg.type === 'text' && <p className="whitespace-pre-wrap break-words">{msg.content}</p>}
 
-        {msg.type === 'photo' && msg.mediaPath && (
-          <>
-            <img
-              src={`/api/media?path=${encodeURIComponent(msg.mediaPath)}`}
-              alt="foto"
-              onClick={() => setLightboxOpen(true)}
-              className="rounded-lg max-w-full max-h-72 mb-1 cursor-zoom-in hover:opacity-90 transition-opacity"
-            />
-            <PhotoTimerBadge msg={msg} />
-            {lightboxOpen && (
-              <Lightbox
+          {msg.type === 'photo' && msg.mediaPath && (
+            <>
+              <img
                 src={`/api/media?path=${encodeURIComponent(msg.mediaPath)}`}
                 alt="foto"
-                onClose={() => setLightboxOpen(false)}
+                onClick={() => setLightboxOpen(true)}
+                className="rounded-lg max-w-full max-h-72 mb-1 cursor-zoom-in hover:opacity-90 transition-opacity"
               />
-            )}
-          </>
-        )}
+              <PhotoTimerBadge msg={msg} />
+            </>
+          )}
 
-        {msg.type === 'voice' && msg.mediaPath && <VoicePlayer path={msg.mediaPath} mine={msg.fromMe} />}
+          {msg.type === 'voice' && msg.mediaPath && <VoicePlayer path={msg.mediaPath} mine={msg.fromMe} />}
 
-        <p className={`text-[10px] mt-1 ${msg.fromMe ? 'text-emerald-100/70' : 'text-zinc-500'}`}>
-          {time}
-          {msg.fromMe && (msg.readAt ? ' · ✓✓' : ' · ✓')}
-        </p>
+          <p className={`text-[10px] mt-1 ${msg.fromMe ? 'text-emerald-100/70' : 'text-zinc-500'}`}>
+            {time}
+            {msg.fromMe && (msg.readAt ? ' · ✓✓' : ' · ✓')}
+          </p>
+        </div>
       </div>
-    </div>
+      {/* Lightbox OUTSIDE the bubble — renders at body level via portal */}
+      {lightboxOpen && msg.mediaPath && (
+        <Lightbox
+          src={`/api/media?path=${encodeURIComponent(msg.mediaPath)}`}
+          alt="foto"
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
+    </>
   )
 }
 
