@@ -54,7 +54,7 @@ export function AuthModal() {
       store.setUser(data.user)
       store.setView({ kind: 'app' })
       setOpen(false)
-      window.location.reload()
+      // NO reload — the Context update will switch from AiLoginScreen to MainApp
     } catch {
       setError('Error de conexión')
       setLoading(false)
@@ -79,7 +79,7 @@ export function AuthModal() {
       store.setUser(data.user)
       store.setView({ kind: 'app' })
       setOpen(false)
-      window.location.reload()
+      // NO reload
     } catch {
       setError('Error de conexión')
       setLoading(false)
