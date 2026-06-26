@@ -115,25 +115,31 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    -webkit-tap-highlight-color: transparent;
+  }
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
+    overflow: hidden;
+    background: #000 !important;
   }
   body {
-    @apply bg-background text-foreground;
-    /* iOS safe area padding — extra padding to ensure buttons are tappable */
-    padding-top: calc(env(safe-area-inset-top) + 12px);
-    padding-bottom: calc(env(safe-area-inset-bottom) + 12px);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
+    /* PADDING FIJO — 70px arriba, 55px abajo para TODOS los iPhones */
+    padding-top: 70px !important;
+    padding-bottom: 55px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
   }
-  /* Headers need extra top padding on iOS */
-  header {
-    padding-top: calc(env(safe-area-inset-top) + 8px) !important;
+  /* ANULAR sticky/fixed — hacer todo relative para que respete el padding del body */
+  header, footer, nav {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
   }
-  /* Footers need extra bottom padding on iOS */
-  footer {
-    padding-bottom: calc(env(safe-area-inset-bottom) + 8px) !important;
-  }
-  /* Bottom navigation needs extra padding too */
-  nav {
-    padding-bottom: calc(env(safe-area-inset-bottom) + 6px) !important;
+  [class*="sticky"] {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
   }
 }
