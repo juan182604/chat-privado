@@ -265,6 +265,7 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null)
 
   return (
+    <>
     <div className="flex flex-col h-full bg-zinc-950 relative">
       {/* Header */}
       <header className="border-b border-zinc-800/60 px-3 py-2 flex items-center gap-2 ">
@@ -372,12 +373,6 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
             </button>
           )}
         </footer>
-      {lightboxSrc && (
-        <Lightbox
-          src={lightboxSrc}
-          alt="foto"
-          onClose={() => setLightboxSrc(null)}
-        />
       )}
 
       {/* Photo send dialog — pick self-destruct timer before sending */}
@@ -436,6 +431,16 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
         </div>
       )}
     </div>
+
+    {/* Lightbox — OUTSIDE the main div, rendered via portal to document.body */}
+    {lightboxSrc && (
+      <Lightbox
+        src={lightboxSrc}
+        alt="foto"
+        onClose={() => setLightboxSrc(null)}
+      />
+    )}
+    </>
   )
 }
 
