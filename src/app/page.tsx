@@ -1,4 +1,5 @@
 'use client'
+export const dynamic = 'force-dynamic'
 
 import { useAppStore } from '@/lib/store'
 import { AiLoginScreen } from '@/components/auth/AiLoginScreen'
