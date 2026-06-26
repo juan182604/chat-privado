@@ -25,14 +25,14 @@ export function ChatList({ onOpenChat }: { onOpenChat: (peerId: string) => void 
 
   // Load on mount AND on interval
   useEffect(() => {
-    loadChats()
+    setTimeout(loadChats, 1000)
     const t = setInterval(loadChats, 3000)
     return () => clearInterval(t)
   }, [])
 
   // Also listen for custom event
   useEffect(() => {
-    const handler = () => loadChats()
+    const handler = () => setTimeout(loadChats, 1000)
     window.addEventListener('nx:refresh-chats', handler)
     return () => window.removeEventListener('nx:refresh-chats', handler)
   }, [])
