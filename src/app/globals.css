@@ -126,21 +126,41 @@ html, body {
   margin: 0 !important;
   padding: 0 !important;
   width: 100% !important;
-  overflow: hidden !important;
   background: #000 !important;
 }
 
-body {
-  padding-top: 70px !important;
-  padding-bottom: 55px !important;
-  padding-left: 8px !important;
-  padding-right: 8px !important;
+/* MÓVIL: overflow hidden para que no rebote (bounce effect) */
+@media (max-width: 768px) {
+  html, body {
+    overflow: hidden !important;
+  }
+  body {
+    padding-top: 70px !important;
+    padding-bottom: 55px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+  /* Anular sticky/fixed en móvil */
+  header, footer, nav,
+  [class*="sticky"], [class*="fixed"] {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+  }
 }
 
-/* Anular sticky/fixed en TODOS los elementos */
-header, footer, nav,
-[class*="sticky"], [class*="fixed"] {
-  position: relative !important;
-  top: auto !important;
-  bottom: auto !important;
+/* PC: scroll normal con la rueda del mouse */
+@media (min-width: 769px) {
+  html, body {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+  body {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+    max-width: 672px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    min-height: 100vh !important;
+  }
 }
