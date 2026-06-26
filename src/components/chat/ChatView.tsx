@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useAppStore, ChatMessage } from '@/lib/store'
-import { useShallow } from 'zustand/react/shallow'
 import { VoicePlayer } from '@/components/chat/VoicePlayer'
 import { Lightbox } from '@/components/chat/Lightbox'
 import { ArrowLeft, Phone, Video, Send, Paperclip, Mic, ImageIcon, X, Clock, Timer } from 'lucide-react'
@@ -33,12 +32,7 @@ function formatRemaining(seconds: number): string {
 
 export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => void }) {
   // Single useAppStore call to avoid multiple useSyncExternalStore
-  const { user, setMessagesStore, appendMessageStore, markReadStore } = useAppStore(useShallow((s) => ({
-    user: s.user,
-    setMessagesStore: s.setMessages,
-    appendMessageStore: s.appendMessage,
-    markReadStore: s.markRead,
-  })))
+  const { user, setMessages: setMessagesStore, appendMessage: appendMessageStore, markRead: markReadStore } = useAppStore()
 
   // LOCAL state instead of Zustand for messages — avoids getSnapshot infinite loop
   const [messages, setMessages] = useState<ChatMessage[]>([])

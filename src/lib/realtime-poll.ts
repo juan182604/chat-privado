@@ -12,7 +12,7 @@ import { useAppStore, ChatMessage } from '@/lib/store'
  * - When a new incoming message arrives for the active chat, marks it as read
  */
 export function useRealtimePolling() {
-  const user = useAppStore((s) => s.user)
+  const { user } = useAppStore()
   const setChats = useAppStore((s) => s.setChats)
   const setFriends = useAppStore((s) => s.setFriends)
   const mergeMessages = useAppStore((s) => s.mergeMessages)

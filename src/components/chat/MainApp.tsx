@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react'
 import { useAppStore } from '@/lib/store'
-import { useShallow } from 'zustand/react/shallow'
 import { useRealtimePolling } from '@/lib/realtime-poll'
 import { ChatList } from '@/components/chat/ChatList'
 import { ChatView } from '@/components/chat/ChatView'
@@ -13,13 +12,7 @@ import { CallOverlay } from '@/components/chat/CallOverlay'
 import { MessageCircle, Users, Shield, User, ArrowLeft } from 'lucide-react'
 
 export function MainApp() {
-  const { user, tab, setTab, activeChatPeerId, setActiveChat } = useAppStore(useShallow((s) => ({
-    user: s.user,
-    tab: s.tab,
-    setTab: s.setTab,
-    activeChatPeerId: s.activeChatPeerId,
-    setActiveChat: s.setActiveChat,
-  })))
+  const { user, tab, setTab, activeChatPeerId, setActiveChat } = useAppStore()
 
   // Wire up realtime polling
   useRealtimePolling()
