@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, useMemo, ReactNode } from 'react'
 
 export type CurrentUser = {
   id: string; uniqueId: string; username: string; firstName: string; lastName: string
@@ -69,11 +69,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  return (
-    <AppContext.Provider value={{ user, setUser, view, setView, tab, setTab, activeChatPeerId, setActiveChat, chats, setChats, friends, setFriends, messages, setMessages, appendMessage, mergeMessages, markRead }}>
-      {children}
-    </AppContext.Provider>
-  )
+  // MEMOIZE the context value to prevent infinite re-renders
+  const value = useMemo<AppState>(() => ({
+    user, setUser, view, setView, tab, setTab, activeChatPeerId, setActiveChat,
+    chats, setChats, friends, setFriends, messages, setMessages, appendMessage, mergeMessages, markRead
+  }), [user, view, tab, activeChatPeerId, chats, friends, messages, setMessages, appendMessage, mergeMessages, markRead])
+
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }
 
 export function useAppStore<T = AppState>(selector?: (s: AppState) => T): T {

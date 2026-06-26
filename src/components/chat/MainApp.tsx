@@ -15,7 +15,7 @@ export function MainApp() {
   const { user, tab, setTab, activeChatPeerId, setActiveChat } = useAppStore()
 
   // Wire up realtime polling
-  // useRealtimePolling()
+  useRealtimePolling()
 
   // Swipe-to-go-back gesture: swipe right on the left edge to exit chat
   useEffect(() => {
