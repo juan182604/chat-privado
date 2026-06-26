@@ -253,6 +253,9 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
     )
   }
 
+  // Lightbox state — MUST be before any early return (Rules of Hooks)
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null)
+
   if (loading) {
     return (
       <div className="flex flex-col h-full items-center justify-center text-zinc-500">
@@ -260,9 +263,6 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
       </div>
     )
   }
-
-  // Lightbox state at the TOP level of ChatView (outside overflow:hidden containers)
-  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null)
 
   return (
     <>
