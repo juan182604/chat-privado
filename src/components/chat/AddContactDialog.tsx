@@ -11,7 +11,9 @@ export function AddContactDialog({
   open: boolean
   onOpenChange: (o: boolean) => void
 }) {
-  const { user } = useAppStore()
+  const user = useAppStore((s) => s.user)
+  const friends = useAppStore((s) => s.friends)
+  const setFriends = useAppStore((s) => s.setFriends)
   const [query, setQuery] = useState('')
   const [found, setFound] = useState<Friend | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -19,21 +21,13 @@ export function AddContactDialog({
   const [adding, setAdding] = useState(false)
 
   useEffect(() => {
-    if (!open) {
-      setQuery('')
-      setFound(null)
-      setError(null)
-    }
+    if (!open) { setQuery(''); setFound(null); setError(null) }
   }, [open])
 
   const search = async () => {
-    setError(null)
-    setFound(null)
+    setError(null); setFound(null)
     const id = query.trim().toLowerCase()
-    if (!/^[a-z0-9]{6}$/.test(id)) {
-      setError('El ID debe ser 6 caracteres (letras minúsculas + números)')
-      return
-    }
+    if (!/^[a-z0-9]{6}$/.test(id)) { setError('El ID debe ser 6 caracteres'); return }
     setSearching(true)
     try {
       const res = await fetch(`/api/users/search?_t=${Date.now()}&id=${id}`, { cache: 'no-store' as RequestCache })
@@ -49,7 +43,9 @@ export function AddContactDialog({
     try {
       const res = await fetch('/api/friends/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ targetUniqueId: found.uniqueId }) })
       const data = await res.json()
-      if (!res.ok) { setError(data.error || 'Error al agregar'); return }
+      if (!res.ok) { setError(data.error || 'Error'); return }
+      // Update the friends list in the store immediately
+      setFriends([...friends, data.friend])
       onOpenChange(false)
     } finally { setAdding(false) }
   }
@@ -64,9 +60,9 @@ export function AddContactDialog({
           <button onClick={() => onOpenChange(false)} className="text-zinc-400 hover:text-zinc-100"><X className="w-5 h-5" /></button>
         </div>
         <div className="px-5 py-5 space-y-4">
-          <p className="text-xs text-zinc-400 leading-relaxed">Solo puedes agregar contactos por su <strong className="text-zinc-200">ID único de 6 caracteres</strong> (no por nombre).</p>
+          <p className="text-xs text-zinc-400">Solo puedes agregar contactos por su <strong className="text-zinc-200">ID único de 6 caracteres</strong>.</p>
           <div className="flex gap-2">
-            <input value={query} onChange={(e) => setQuery(e.target.value.toLowerCase())} onKeyDown={(e) => e.key === 'Enter' && search()} placeholder="ej: a3x9k2" maxLength={6} className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm font-mono tracking-widest outline-none focus:border-emerald-500 uppercase" />
+            <input value={query} onChange={(e) => setQuery(e.target.value.toLowerCase())} onKeyDown={(e) => e.key === 'Enter' && search()} placeholder="ej: a3x9k2" maxLength={6} className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm font-mono tracking-widest outline-none focus:border-emerald-500 text-white" />
             <button onClick={search} disabled={searching || query.length !== 6} className="bg-zinc-700 hover:bg-zinc-600 disabled:opacity-40 px-4 rounded-lg text-sm text-white flex items-center gap-1">{searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />} Buscar</button>
           </div>
           {error && <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2 text-sm text-red-300">{error}</div>}
@@ -82,7 +78,7 @@ export function AddContactDialog({
             </div>
           )}
           <div className="bg-zinc-800/30 border border-zinc-700/50 rounded-lg p-3 text-xs text-zinc-400">
-            <p className="font-semibold text-zinc-300 mb-1">Tu ID para compartir:</p>
+            <p className="font-semibold text-zinc-300 mb-1">Tu ID:</p>
             <p className="font-mono text-lg text-emerald-400 tracking-widest">{user?.uniqueId}</p>
           </div>
         </div>
