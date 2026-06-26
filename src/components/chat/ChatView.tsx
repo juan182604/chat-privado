@@ -99,11 +99,12 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages.length])
 
-  // Poll for new messages
+  // Poll for new messages AND refresh conversation (to remove expired photos)
   useEffect(() => {
     const poll = setInterval(async () => {
       try {
-        const res = await fetch(`/api/messages/poll?_t=${Date.now()}&since=${new Date(Date.now() - 5000).toISOString()}`)
+        // 1. Check for new messages
+        const res = await fetch(`/api/messages/poll?_t=${Date.now()}&since=${new Date(Date.now() - 10000).toISOString()}`)
         const data = await res.json()
         if (data.newMessages) {
           for (const m of data.newMessages) {
@@ -119,6 +120,12 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
               })
             }
           }
+        }
+        // 2. Refresh the full conversation to remove expired photos
+        const res2 = await fetch(`/api/messages/send?peerUniqueId=${peerId}&_t=${Date.now()}`)
+        const data2 = await res2.json()
+        if (res2.ok && Array.isArray(data2.messages)) {
+          setMessages(data2.messages)
         }
       } catch {}
     }, 3000)
