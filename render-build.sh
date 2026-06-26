@@ -13,11 +13,8 @@ bun --version
 echo "=== Installing dependencies ==="
 bun install
 
-echo "=== Building Next.js ==="
-NODE_ENV=production bun run build
-
 echo "=== Creating uploads directories ==="
 mkdir -p public/uploads/photo
 mkdir -p public/uploads/voice
 
-echo "=== Build complete ==="
+echo "=== Build complete (using dev server for production) ==="
