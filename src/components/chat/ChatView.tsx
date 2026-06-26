@@ -32,9 +32,12 @@ function formatRemaining(seconds: number): string {
   return mm === 0 ? `${h}h` : `${h}h ${mm}m`
 }
 
+// Stable empty array — avoids "getSnapshot should be cached" infinite loop
+const EMPTY_MESSAGES: ChatMessage[] = []
+
 export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => void }) {
   const user = useAppStore((s) => s.user)
-  const messages = useAppStore((s) => s.messages[peerId] ?? [])
+  const messages = useAppStore((s) => s.messages[peerId]) ?? EMPTY_MESSAGES
   const setMessages = useAppStore((s) => s.setMessages)
   const appendMessage = useAppStore((s) => s.appendMessage)
   const markRead = useAppStore((s) => s.markRead)
