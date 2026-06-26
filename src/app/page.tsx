@@ -2,13 +2,14 @@
 
 import { useEffect } from 'react'
 import { useAppStore } from '@/lib/store'
-import { useShallow } from 'zustand/react/shallow'
+
 import { AiLoginScreen } from '@/components/auth/AiLoginScreen'
 import { AuthModal } from '@/components/auth/AuthModal'
 import { MainApp } from '@/components/chat/MainApp'
 
 export default function Home() {
-  const { user, setUser } = useAppStore(useShallow((s) => ({ user: s.user, setUser: s.setUser })))
+  const user = useAppStore((s) => s.user)
+  const setUser = useAppStore((s) => s.setUser)
 
   useEffect(() => {
     if (!user) return
