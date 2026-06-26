@@ -261,6 +261,9 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
     )
   }
 
+  // Lightbox state at the TOP level of ChatView (outside overflow:hidden containers)
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null)
+
   return (
     <div className="flex flex-col h-full bg-zinc-950 relative">
       {/* Header */}
@@ -295,7 +298,7 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
           </div>
         )}
         {messages.map((m) => (
-          <MessageBubble key={m.id} msg={m} myId={user?.uniqueId ?? ''} />
+          <MessageBubble key={m.id} msg={m} myId={user?.uniqueId ?? ''} onPhotoClick={(src) => setLightboxSrc(src)} />
         ))}
       </div>
 
@@ -369,6 +372,12 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
             </button>
           )}
         </footer>
+      {lightboxSrc && (
+        <Lightbox
+          src={lightboxSrc}
+          alt="foto"
+          onClose={() => setLightboxSrc(null)}
+        />
       )}
 
       {/* Photo send dialog — pick self-destruct timer before sending */}
@@ -430,8 +439,7 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
   )
 }
 
-function MessageBubble({ msg, myId }: { msg: ChatMessage; myId: string }) {
-  const [lightboxOpen, setLightboxOpen] = useState(false)
+function MessageBubble({ msg, myId, onPhotoClick }: { msg: ChatMessage; myId: string; onPhotoClick: (src: string) => void }) {
   const time = new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 
   if (msg.type === 'call') {
@@ -463,7 +471,7 @@ function MessageBubble({ msg, myId }: { msg: ChatMessage; myId: string }) {
               <img
                 src={`/api/media?path=${encodeURIComponent(msg.mediaPath)}`}
                 alt="foto"
-                onClick={() => setLightboxOpen(true)}
+                onClick={() => onPhotoClick(`/api/media?path=${encodeURIComponent(msg.mediaPath)}`)}
                 className="rounded-lg max-w-full max-h-72 mb-1 cursor-zoom-in hover:opacity-90 transition-opacity"
               />
               <PhotoTimerBadge msg={msg} />
@@ -478,14 +486,6 @@ function MessageBubble({ msg, myId }: { msg: ChatMessage; myId: string }) {
           </p>
         </div>
       </div>
-      {/* Lightbox OUTSIDE the bubble — renders at body level via portal */}
-      {lightboxOpen && msg.mediaPath && (
-        <Lightbox
-          src={`/api/media?path=${encodeURIComponent(msg.mediaPath)}`}
-          alt="foto"
-          onClose={() => setLightboxOpen(false)}
-        />
-      )}
     </>
   )
 }
