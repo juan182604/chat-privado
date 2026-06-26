@@ -13,7 +13,6 @@ import { useAppStore, ChatMessage } from '@/lib/store'
  */
 export function useRealtimePolling() {
   const { user, setChats, setFriends, mergeMessages, activeChatPeerId, markRead } = useAppStore()
-  const { user } = useAppStore()
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const inFlightRef = useRef(false)
 
