@@ -5,10 +5,8 @@ import { Copy, LogOut, Shield, Info, Download, Smartphone, Edit, KeyRound, User 
 import { useState } from 'react'
 
 export function ProfileView() {
-  const user = useAppStore((s) => s.user)
-  const setUser = useAppStore((s) => s.setUser)
-  const setView = useAppStore((s) => s.setView)
-  const [copied, setCopied] = useState(false)
+  const { user, setUser, setView } = useAppStore()
+        const [copied, setCopied] = useState(false)
   const [showDownload, setShowDownload] = useState(false)
   const [showEditName, setShowEditName] = useState(false)
   const [showChangePin, setShowChangePin] = useState(false)

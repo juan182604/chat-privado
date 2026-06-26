@@ -5,14 +5,14 @@ import { useAppStore, Friend } from '@/lib/store'
 import { X, Search, UserPlus, Check, Loader2 } from 'lucide-react'
 
 export function AddContactDialog({
+  const { user } = useAppStore()
   open,
   onOpenChange,
 }: {
   open: boolean
   onOpenChange: (o: boolean) => void
 }) {
-  const user = useAppStore((s) => s.user)
-  const [query, setQuery] = useState('')
+    const [query, setQuery] = useState('')
   const [found, setFound] = useState<Friend | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [searching, setSearching] = useState(false)

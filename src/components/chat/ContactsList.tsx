@@ -4,10 +4,8 @@ import { useAppStore } from '@/lib/store'
 import { Trash2, MessageCircle, Users } from 'lucide-react'
 
 export function ContactsList({ onOpenChat }: { onOpenChat: (peerId: string) => void }) {
-  const friends = useAppStore((s) => s.friends)
-  const setFriends = useAppStore((s) => s.setFriends)
-  const user = useAppStore((s) => s.user)
-
+  const { friends, setFriends, user } = useAppStore()
+      
   const remove = async (uniqueId: string) => {
     if (!confirm('¿Eliminar este contacto? También se borrará la conversación.')) return
     await fetch('/api/friends/remove', {

@@ -6,9 +6,8 @@ import { Search, MessageCircle, UserPlus } from 'lucide-react'
 import { AddContactDialog } from '@/components/chat/AddContactDialog'
 
 export function ChatList({ onOpenChat }: { onOpenChat: (peerId: string) => void }) {
-  const user = useAppStore((s) => s.user)
-  const chats = useAppStore((s) => s.chats)
-  const [filter, setFilter] = useState('')
+  const { user, chats, setChats } = useAppStore()
+      const [filter, setFilter] = useState('')
   const [addOpen, setAddOpen] = useState(false)
 
   const filtered = chats.filter(

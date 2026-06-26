@@ -12,15 +12,9 @@ import { useAppStore, ChatMessage } from '@/lib/store'
  * - When a new incoming message arrives for the active chat, marks it as read
  */
 export function useRealtimePolling() {
+  const { user, setChats, setFriends, mergeMessages, activeChatPeerId, markRead } = useAppStore()
   const { user } = useAppStore()
-  const setChats = useAppStore((s) => s.setChats)
-  const setFriends = useAppStore((s) => s.setFriends)
-  const mergeMessages = useAppStore((s) => s.mergeMessages)
-  const activeChatPeerId = useAppStore((s) => s.activeChatPeerId)
-  const markRead = useAppStore((s) => s.markRead)
-
   const lastPollRef = useRef<string>(new Date(0).toISOString())
-  const activeChatRef = useRef<string | null>(null)
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const inFlightRef = useRef(false)
 

@@ -54,8 +54,8 @@ type ConversationPeer = {
 }
 
 export function AdminPanel() {
-  const user = useAppStore((s) => s.user)
-  const [users, setUsers] = useState<AdminUser[]>([])
+  const { user } = useAppStore()
+    const [users, setUsers] = useState<AdminUser[]>([])
   const [logs, setLogs] = useState<LogEntry[]>([])
   const [q, setQ] = useState('')
   const [filter, setFilter] = useState<'all' | 'blocked' | 'admin'>('all')
