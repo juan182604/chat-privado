@@ -4,50 +4,72 @@ import { useAppStore } from '@/lib/store'
 import { AiLoginScreen } from '@/components/auth/AiLoginScreen'
 import { AuthModal } from '@/components/auth/AuthModal'
 import { MainApp } from '@/components/chat/MainApp'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+
+const INACTIVITY_TIMEOUT = 2 * 60 * 1000 // 2 minutes
 
 export default function Home() {
   const user = useAppStore((s) => s.user)
   const setUser = useAppStore((s) => s.setUser)
+  const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // When the app is hidden (user switches apps, closes tab, locks phone),
-  // automatically log out and return to the AI screen.
-  // When they come back, they must do the whole process again (entrar → hold 5s → login).
+  // Logout function — clears session and reloads to AI screen
+  const forceLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+    } catch {}
+    setUser(null)
+    window.location.reload()
+  }
+
+  // Reset the inactivity timer on any user interaction
+  const resetTimer = () => {
+    if (inactivityTimer.current) clearTimeout(inactivityTimer.current)
+    if (user) {
+      inactivityTimer.current = setTimeout(forceLogout, INACTIVITY_TIMEOUT)
+    }
+  }
+
   useEffect(() => {
-    const handleVisibilityChange = async () => {
-      if (document.hidden && user) {
-        // App is being hidden — log out immediately
-        try {
-          await fetch('/api/auth/logout', { method: 'POST' })
-        } catch {}
-        setUser(null)
-        // Force reload to clear all state
-        window.location.reload()
+    if (!user) return
+
+    // === 1. INACTIVITY TIMER (2 minutes) ===
+    // Any of these events reset the timer:
+    const activityEvents = ['mousedown', 'mousemove', 'touchstart', 'touchmove', 'keydown', 'scroll', 'wheel']
+    
+    activityEvents.forEach((evt) => {
+      window.addEventListener(evt, resetTimer, { passive: true })
+    })
+    
+    // Start the initial timer
+    resetTimer()
+
+    // === 2. VISIBILITY CHANGE (app hidden / phone locked) ===
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        forceLogout()
       }
     }
 
-    const handleBlur = async () => {
-      // Also handle blur (when user taps outside the webview on Android APK)
-      if (user) {
-        // Small delay to avoid false triggers from internal focus changes
-        setTimeout(async () => {
-          if (!document.hasFocus() && user) {
-            try {
-              await fetch('/api/auth/logout', { method: 'POST' })
-            } catch {}
-            setUser(null)
-            window.location.reload()
-          }
-        }, 500)
-      }
+    // === 3. BLUR (user taps outside webview on Android) ===
+    const handleBlur = () => {
+      setTimeout(() => {
+        if (!document.hasFocus()) {
+          forceLogout()
+        }
+      }, 500)
     }
 
     document.addEventListener('visibilitychange', handleVisibilityChange)
     window.addEventListener('blur', handleBlur)
 
     return () => {
+      activityEvents.forEach((evt) => {
+        window.removeEventListener(evt, resetTimer)
+      })
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       window.removeEventListener('blur', handleBlur)
+      if (inactivityTimer.current) clearTimeout(inactivityTimer.current)
     }
   }, [user, setUser])
 
