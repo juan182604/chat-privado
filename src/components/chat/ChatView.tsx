@@ -126,14 +126,36 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
         const res2 = await fetch(`/api/messages/send?peerUniqueId=${peerId}&_t=${Date.now()}`)
         const data2 = await res2.json()
         if (res2.ok && Array.isArray(data2.messages)) {
-          setMessages(data2.messages)
+          setMessages(prev => {
+            const prevIds = prev.map(m => m.id).sort().join(',')
+            const newIds = data2.messages.map((m: any) => m.id).sort().join(',')
+            if (prevIds === newIds) {
+              let changed = false
+              const map = new Map(prev.map(m => [m.id, m]))
+              for (const nm of data2.messages) {
+                const pm = map.get(nm.id)
+                if (pm && pm.photoViewStartedAt !== nm.photoViewStartedAt) { changed = true; break }
+              }
+              if (!changed) return prev
+            }
+            // The list changed — a photo was removed by the backend.
+            // Close the lightbox if the open photo is no longer in the list.
+            if (lightboxSrc) {
+              const stillExists = data2.messages.some((m: any) => 
+                m.type === 'photo' && m.mediaPath && 
+                `/api/media?path=${encodeURIComponent(m.mediaPath)}` === lightboxSrc
+              )
+              if (!stillExists) setLightboxSrc(null)
+            }
+            return data2.messages
+          })
         }
       } catch {}
     }
-    poll() // Run immediately
-    const interval = setInterval(poll, 1000) // Every 1 second
+    poll()
+    const interval = setInterval(poll, 1000)
     return () => clearInterval(interval)
-  }, [peerId])
+  }, [peerId, lightboxSrc])
 
   const sendText = async () => {
     const text = input.trim()
