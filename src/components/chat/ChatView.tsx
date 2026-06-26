@@ -31,10 +31,13 @@ function formatRemaining(seconds: number): string {
 }
 
 export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => void }) {
-  const user = useAppStore((s) => s.user)
-  const setMessagesStore = useAppStore((s) => s.setMessages)
-  const appendMessageStore = useAppStore((s) => s.appendMessage)
-  const markReadStore = useAppStore((s) => s.markRead)
+  // Single useAppStore call to avoid multiple useSyncExternalStore
+  const { user, setMessagesStore, appendMessageStore, markReadStore } = useAppStore((s) => ({
+    user: s.user,
+    setMessagesStore: s.setMessages,
+    appendMessageStore: s.appendMessage,
+    markReadStore: s.markRead,
+  }))
 
   // LOCAL state instead of Zustand for messages — avoids getSnapshot infinite loop
   const [messages, setMessages] = useState<ChatMessage[]>([])

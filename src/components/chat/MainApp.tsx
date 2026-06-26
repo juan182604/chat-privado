@@ -12,14 +12,16 @@ import { CallOverlay } from '@/components/chat/CallOverlay'
 import { MessageCircle, Users, Shield, User, ArrowLeft } from 'lucide-react'
 
 export function MainApp() {
-  const user = useAppStore((s) => s.user)
-  const tab = useAppStore((s) => s.tab)
-  const setTab = useAppStore((s) => s.setTab)
-  const activeChatPeerId = useAppStore((s) => s.activeChatPeerId)
-  const setActiveChat = useAppStore((s) => s.setActiveChat)
+  const { user, tab, setTab, activeChatPeerId, setActiveChat } = useAppStore((s) => ({
+    user: s.user,
+    tab: s.tab,
+    setTab: s.setTab,
+    activeChatPeerId: s.activeChatPeerId,
+    setActiveChat: s.setActiveChat,
+  }))
 
-  // Wire up realtime polling — disabled temporarily to debug hooks error
-  // useRealtimePolling()
+  // Wire up realtime polling
+  useRealtimePolling()
 
   // Swipe-to-go-back gesture: swipe right on the left edge to exit chat
   useEffect(() => {
