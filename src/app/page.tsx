@@ -1,5 +1,6 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { useAppStore, AppProvider } from '@/lib/store'
 import { AiLoginScreen } from '@/components/auth/AiLoginScreen'
