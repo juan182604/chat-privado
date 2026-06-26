@@ -33,7 +33,7 @@ export function ProfileView() {
 
   return (
     <div className="flex flex-col h-full">
-      <header className="px-4 py-3 border-b border-zinc-800/60 sticky top-0 bg-zinc-950 z-10">
+      <header className="px-4 py-3 border-b border-zinc-800/60 ">
         <h1 className="text-xl font-bold text-zinc-100">Perfil</h1>
       </header>
       <div className="flex-1 overflow-y-auto p-4 space-y-4">

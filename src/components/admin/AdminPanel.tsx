@@ -194,7 +194,7 @@ export function AdminPanel() {
 
   return (
     <div className="flex flex-col h-full bg-zinc-950">
-      <header className="px-4 py-3 border-b border-zinc-800/60 sticky top-0 bg-zinc-950 z-10">
+      <header className="px-4 py-3 border-b border-zinc-800/60 ">
         <div className="flex items-center gap-2 mb-3">
           <Shield className="w-5 h-5 text-amber-400" />
           <h1 className="text-xl font-bold text-zinc-100">Panel de Administración</h1>
@@ -349,7 +349,7 @@ export function AdminPanel() {
           <div className="flex flex-col md:flex-row h-full">
             {/* LEFT: list of all users (searchable by username OR id) */}
             <div className="md:w-72 md:border-r border-zinc-800/60 flex flex-col">
-              <div className="p-3 border-b border-zinc-800/60 sticky top-0 bg-zinc-950 z-10">
+              <div className="p-3 border-b border-zinc-800/60 ">
                 <p className="text-sm font-semibold text-zinc-200 mb-2">Selecciona un usuario</p>
                 <div className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 rounded-lg px-3 py-2">
                   <Search className="w-4 h-4 text-zinc-500" />

@@ -20,7 +20,7 @@ export function ChatList({ onOpenChat }: { onOpenChat: (peerId: string) => void 
 
   return (
     <div className="flex flex-col h-full">
-      <div className="px-4 py-3 border-b border-zinc-800/60 sticky top-0 bg-zinc-950 z-10">
+      <div className="px-4 py-3 border-b border-zinc-800/60 ">
         <div className="flex items-center justify-between mb-3">
           <div>
             <h1 className="text-xl font-bold text-zinc-100">Chats</h1>

@@ -85,7 +85,7 @@ export function AiLoginScreen() {
   return (
     <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col">
       {/* Header */}
-      <header className="border-b border-zinc-800/60 backdrop-blur sticky top-0 z-10 bg-zinc-950/80">
+      <header className="border-b border-zinc-800/60 backdrop-blur ">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center">
             <Bot className="w-5 h-5 text-white" />
@@ -135,7 +135,7 @@ export function AiLoginScreen() {
       </main>
 
       {/* Composer */}
-      <footer className="border-t border-zinc-800/60 bg-zinc-950/80 backdrop-blur sticky bottom-0">
+      <footer className="border-t border-zinc-800/60 bg-zinc-950/80 backdrop-blur ">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-2">
           <input
             value={input}

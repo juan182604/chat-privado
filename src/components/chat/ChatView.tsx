@@ -264,7 +264,7 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
   return (
     <div className="flex flex-col h-full bg-zinc-950 relative">
       {/* Header */}
-      <header className="border-b border-zinc-800/60 px-3 py-2 flex items-center gap-2 sticky top-0 bg-zinc-950 z-10">
+      <header className="border-b border-zinc-800/60 px-3 py-2 flex items-center gap-2 ">
         <button onClick={onBack} className="p-2 text-zinc-400 hover:text-zinc-100">
           <ArrowLeft className="w-5 h-5" />
         </button>

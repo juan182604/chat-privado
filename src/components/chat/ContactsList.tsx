@@ -20,7 +20,7 @@ export function ContactsList({ onOpenChat }: { onOpenChat: (peerId: string) => v
 
   return (
     <div className="flex flex-col h-full">
-      <header className="px-4 py-3 border-b border-zinc-800/60 sticky top-0 bg-zinc-950 z-10">
+      <header className="px-4 py-3 border-b border-zinc-800/60 ">
         <h1 className="text-xl font-bold text-zinc-100">Contactos</h1>
         <p className="text-[11px] text-zinc-500">Tu ID: <span className="font-mono text-emerald-400">{user?.uniqueId}</span></p>
       </header>

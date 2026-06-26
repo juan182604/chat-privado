@@ -50,6 +50,10 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="Chat Privado" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        {/* NO CACHE — force browser to always load fresh */}
+        <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta httpEquiv="Pragma" content="no-cache" />
+        <meta httpEquiv="Expires" content="0" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <style dangerouslySetInnerHTML={{ __html: `
           * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -58,16 +62,21 @@ export default function RootLayout({
             overflow: hidden; background: #000;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
           }
-          /* PADDING DIRECTO EN BODY — sin #app-shell, sin vh tricks.
-             60px arriba y 50px abajo garantiza espacio en TODOS los iPhones.
-             El contenido se reduce automáticamente. */
+          /* PADDING FIJO EN BODY — 70px arriba, 55px abajo.
+             Esto empuja TODO el contenido hacia abajo, incluyendo
+             headers sticky y fixed, porque el body es el contenedor raíz. */
           body {
-            padding-top: 60px !important;
-            padding-bottom: 50px !important;
-            padding-left: 6px !important;
-            padding-right: 6px !important;
+            padding-top: 70px !important;
+            padding-bottom: 55px !important;
+            padding-left: 8px !important;
+            padding-right: 8px !important;
           }
-          /* El contenido ocupa el 100% del espacio restante */
+          /* IMPORTANTE: anular sticky/fixed que ignoran el padding */
+          header, [class*="sticky"], [class*="fixed"] {
+            top: auto !important;
+            position: relative !important;
+          }
+          /* El contenedor de la app */
           #app-content {
             width: 100%;
             height: 100%;
@@ -76,18 +85,20 @@ export default function RootLayout({
             position: relative;
           }
         `}} />
-        {/* ELIMINAR service workers viejos */}
+        {/* Eliminar service workers viejos ANTES de que cargue la página */}
         <script dangerouslySetInnerHTML={{ __html: `
           if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(r) { r.forEach(function(x) { x.unregister(); }); });
+            navigator.serviceWorker.getRegistrations().then(function(r) {
+              r.forEach(function(x) { x.unregister(); });
+            });
+          }
+          if ('caches' in window) {
             caches.keys().then(function(n) { n.forEach(function(name) { caches.delete(name); }); });
           }
         `}} />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} style={{ background: '#000' }}>
-        <div id="app-content" style={{ width: '100%', height: '100%', background: '#0a0a0a', overflow: 'hidden', position: 'relative' }}>
-          {children}
-        </div>
+        <div id="app-content">{children}</div>
         <Toaster />
       </body>
     </html>
