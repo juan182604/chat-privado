@@ -172,9 +172,10 @@ function toast({ ...props }: Toast) {
 }
 
 function useToast() {
-  const [state, setState] = React.useState<State>(memoryState)
+  const [state, setState] = React.useState<State>({ toasts: [] })
 
   React.useEffect(() => {
+    setState({ ...memoryState })
     listeners.push(setState)
     return () => {
       const index = listeners.indexOf(setState)
@@ -192,3 +193,4 @@ function useToast() {
 }
 
 export { useToast, toast }
+// Sync initial state
