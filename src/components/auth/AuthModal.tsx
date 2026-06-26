@@ -7,13 +7,24 @@ import { useAppStore } from '@/lib/store'
 type Mode = 'login' | 'register'
 
 export function AuthModal() {
-  const { setUser, setView } = useAppStore()
+  const store = useAppStore()
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<Mode>('login')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [showPin, setShowPin] = useState(false)
   const [stayOpen, setStayOpen] = useState(true)
+
+  // Login fields
+  const [loginUser, setLoginUser] = useState('')
+  const [loginPin, setLoginPin] = useState('')
+
+  // Register fields
+  const [rUser, setRUser] = useState('')
+  const [rFirst, setRFirst] = useState('')
+  const [rLast, setRLast] = useState('')
+  const [rPin, setRPin] = useState('')
+  const [rPin2, setRPin2] = useState('')
 
   useEffect(() => {
     const handler = () => { setError(null); setOpen(true) }
@@ -25,21 +36,14 @@ export function AuthModal() {
 
   const submitLogin = async () => {
     setError(null)
+    const username = loginUser.trim().toLowerCase()
+    const pin = loginPin.trim()
+    if (!username || pin.length !== 6) {
+      setError('Usuario y PIN de 6 dígitos requeridos')
+      return
+    }
     setLoading(true)
     try {
-      // Read values directly from DOM (React 19 compatible)
-      const inputs = document.querySelectorAll('input')
-      let username = '', pin = ''
-      for (const inp of inputs) {
-        const p = (inp.placeholder || '').toLowerCase()
-        if (p.includes('usuario')) username = inp.value
-        if (p.includes('pin')) pin = inp.value
-      }
-      if (!username || pin.length !== 6) {
-        setError('Usuario y PIN de 6 dígitos requeridos')
-        setLoading(false)
-        return
-      }
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -47,49 +51,37 @@ export function AuthModal() {
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Error'); setLoading(false); return }
-      setUser(data.user)
+      store.setUser(data.user)
+      store.setView({ kind: 'app' })
       setOpen(false)
-      setView({ kind: 'app' })
       window.location.reload()
     } catch {
+      setError('Error de conexión')
       setLoading(false)
     }
   }
 
   const submitRegister = async () => {
     setError(null)
+    if (rPin !== rPin2) { setError('Los PIN no coinciden'); return }
+    if (!rUser || !rFirst || !rLast || rPin.length !== 6) {
+      setError('Todos los campos son requeridos'); return
+    }
     setLoading(true)
     try {
-      const inputs = document.querySelectorAll('input')
-      let username = '', firstName = '', lastName = '', pin = '', pin2 = ''
-      let pinIndex = 0
-      for (const inp of inputs) {
-        const p = (inp.placeholder || '').toLowerCase()
-        if (p.includes('usuario') && !p.includes('iniciar')) username = inp.value
-        if (p.includes('nombre')) firstName = inp.value
-        if (p.includes('apellido')) lastName = inp.value
-        if (p.includes('pin')) {
-          pinIndex++
-          if (pinIndex === 1) pin = inp.value
-          if (pinIndex === 2) pin2 = inp.value
-        }
-      }
-      if (pin !== pin2) { setError('Los PIN no coinciden'); setLoading(false); return }
-      if (!username || !firstName || !lastName || pin.length !== 6) {
-        setError('Todos los campos son requeridos'); setLoading(false); return
-      }
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, firstName, lastName, pin, persistent: stayOpen }),
+        body: JSON.stringify({ username: rUser.trim().toLowerCase(), firstName: rFirst.trim(), lastName: rLast.trim(), pin: rPin, persistent: stayOpen }),
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error || 'Error'); setLoading(false); return }
-      setUser(data.user)
+      store.setUser(data.user)
+      store.setView({ kind: 'app' })
       setOpen(false)
-      setView({ kind: 'app' })
       window.location.reload()
     } catch {
+      setError('Error de conexión')
       setLoading(false)
     }
   }
@@ -108,17 +100,34 @@ export function AuthModal() {
           {mode === 'login' ? (
             <>
               <Field label="Usuario" icon={<AtSign className="w-4 h-4" />}>
-                <input placeholder="tu_usuario" className="bg-transparent flex-1 outline-none text-sm" />
+                <input
+                  value={loginUser}
+                  onChange={(e) => setLoginUser(e.target.value.toLowerCase())}
+                  placeholder="tu_usuario"
+                  className="bg-transparent flex-1 outline-none text-sm text-white"
+                />
               </Field>
               <Field label="PIN (6 dígitos)" icon={<KeyRound className="w-4 h-4" />}>
-                <input type="password" inputMode="numeric" maxLength={6} placeholder="000000" className="bg-transparent flex-1 outline-none text-sm tracking-widest" />
+                <input
+                  type={showPin ? 'text' : 'password'}
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={loginPin}
+                  onChange={(e) => setLoginPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="000000"
+                  className="bg-transparent flex-1 outline-none text-sm tracking-widest text-white"
+                />
                 <button type="button" onClick={() => setShowPin(v => !v)} className="text-zinc-400 hover:text-zinc-100">{showPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}</button>
               </Field>
               <label className="flex items-center gap-2 text-sm text-zinc-300 cursor-pointer">
                 <input type="checkbox" checked={stayOpen} onChange={e => setStayOpen(e.target.checked)} className="accent-emerald-500" />
                 Mantener sesión abierta
               </label>
-              <button onClick={submitLogin} className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-lg font-semibold text-sm">
+              <button
+                onClick={submitLogin}
+                disabled={loading || !loginUser || loginPin.length !== 6}
+                className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white py-2.5 rounded-lg font-semibold text-sm"
+              >
                 {loading ? 'Entrando…' : 'Entrar'}
               </button>
               <p className="text-center text-sm text-zinc-400">¿No tienes cuenta? <button onClick={() => { setMode('register'); setError(null) }} className="text-emerald-400 hover:underline">Regístrate</button></p>
@@ -126,32 +135,61 @@ export function AuthModal() {
           ) : (
             <>
               <Field label="Usuario" icon={<AtSign className="w-4 h-4" />}>
-                <input placeholder="3-20: minúsculas, números, _" maxLength={20} className="bg-transparent flex-1 outline-none text-sm" />
+                <input
+                  value={rUser}
+                  onChange={(e) => setRUser(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
+                  placeholder="3-20: minúsculas, números, _"
+                  maxLength={20}
+                  className="bg-transparent flex-1 outline-none text-sm text-white"
+                />
               </Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Nombre" icon={<User className="w-4 h-4" />}>
-                  <input maxLength={40} className="bg-transparent flex-1 outline-none text-sm" />
+                  <input value={rFirst} onChange={(e) => setRFirst(e.target.value)} maxLength={40} className="bg-transparent flex-1 outline-none text-sm text-white" />
                 </Field>
                 <Field label="Apellido" icon={<User className="w-4 h-4" />}>
-                  <input maxLength={40} className="bg-transparent flex-1 outline-none text-sm" />
+                  <input value={rLast} onChange={(e) => setRLast(e.target.value)} maxLength={40} className="bg-transparent flex-1 outline-none text-sm text-white" />
                 </Field>
               </div>
               <Field label="PIN (6 dígitos)" icon={<KeyRound className="w-4 h-4" />}>
-                <input type="password" inputMode="numeric" maxLength={6} placeholder="000000" className="bg-transparent flex-1 outline-none text-sm tracking-widest" />
+                <input
+                  type={showPin ? 'text' : 'password'}
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={rPin}
+                  onChange={(e) => setRPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="000000"
+                  className="bg-transparent flex-1 outline-none text-sm tracking-widest text-white"
+                />
               </Field>
               <Field label="Confirmar PIN" icon={<KeyRound className="w-4 h-4" />}>
-                <input type="password" inputMode="numeric" maxLength={6} placeholder="000000" className="bg-transparent flex-1 outline-none text-sm tracking-widest" />
+                <input
+                  type={showPin ? 'text' : 'password'}
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={rPin2}
+                  onChange={(e) => setRPin2(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="000000"
+                  className="bg-transparent flex-1 outline-none text-sm tracking-widest text-white"
+                />
               </Field>
               <label className="flex items-center gap-2 text-sm text-zinc-300 cursor-pointer">
                 <input type="checkbox" checked={stayOpen} onChange={e => setStayOpen(e.target.checked)} className="accent-emerald-500" />
-                Mantener sesión abierta
+                Mantener sesión abierta (no pedir usuario cada vez)
               </label>
-              <button onClick={submitRegister} className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-lg font-semibold text-sm">
+              <button
+                onClick={submitRegister}
+                disabled={loading || !rUser || !rFirst || !rLast || rPin.length !== 6 || rPin !== rPin2}
+                className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white py-2.5 rounded-lg font-semibold text-sm"
+              >
                 {loading ? 'Creando…' : 'Crear cuenta'}
               </button>
               <p className="text-center text-sm text-zinc-400">¿Ya tienes cuenta? <button onClick={() => { setMode('login'); setError(null) }} className="text-emerald-400 hover:underline">Inicia sesión</button></p>
             </>
           )}
+        </div>
+        <div className="border-t border-zinc-800 px-5 py-3 text-center text-[11px] text-zinc-500">
+          <Phone className="inline w-3 h-3 mr-1" /> Disponible en Android, iOS y web — mismo ID, misma cuenta.
         </div>
       </div>
     </div>
