@@ -117,29 +117,30 @@
     @apply border-border outline-ring/50;
     -webkit-tap-highlight-color: transparent;
   }
-  html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100%;
-    overflow: hidden;
-    background: #000 !important;
-  }
-  body {
-    /* PADDING FIJO — 70px arriba, 55px abajo para TODOS los iPhones */
-    padding-top: 70px !important;
-    padding-bottom: 55px !important;
-    padding-left: 8px !important;
-    padding-right: 8px !important;
-  }
-  /* ANULAR sticky/fixed — hacer todo relative para que respete el padding del body */
-  header, footer, nav {
-    position: relative !important;
-    top: auto !important;
-    bottom: auto !important;
-  }
-  [class*="sticky"] {
-    position: relative !important;
-    top: auto !important;
-    bottom: auto !important;
-  }
+}
+
+/* ====== iOS SAFE AREA — FUERA DE @layer PARA MÁXIMA PRIORIDAD ====== */
+/* Estos estilos NO pueden ser sobrescritos por Tailwind */
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  background: #000 !important;
+}
+
+body {
+  padding-top: 70px !important;
+  padding-bottom: 55px !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+/* Anular sticky/fixed en TODOS los elementos */
+header, footer, nav,
+[class*="sticky"], [class*="fixed"] {
+  position: relative !important;
+  top: auto !important;
+  bottom: auto !important;
 }
