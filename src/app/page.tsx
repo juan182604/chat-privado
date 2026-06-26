@@ -1,75 +1,42 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useAppStore } from '@/lib/store'
+import { useShallow } from 'zustand/react/shallow'
 import { AiLoginScreen } from '@/components/auth/AiLoginScreen'
 import { AuthModal } from '@/components/auth/AuthModal'
 import { MainApp } from '@/components/chat/MainApp'
-import { useEffect, useRef } from 'react'
-
-const INACTIVITY_TIMEOUT = 2 * 60 * 1000 // 2 minutes
 
 export default function Home() {
-  const user = useAppStore((s) => s.user)
-  const setUser = useAppStore((s) => s.setUser)
-  const inactivityTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  // Logout function — clears session and reloads to AI screen
-  const forceLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' })
-    } catch {}
-    setUser(null)
-    window.location.reload()
-  }
-
-  // Reset the inactivity timer on any user interaction
-  const resetTimer = () => {
-    if (inactivityTimer.current) clearTimeout(inactivityTimer.current)
-    if (user) {
-      inactivityTimer.current = setTimeout(forceLogout, INACTIVITY_TIMEOUT)
-    }
-  }
+  const { user, setUser } = useAppStore(useShallow((s) => ({ user: s.user, setUser: s.setUser })))
 
   useEffect(() => {
     if (!user) return
 
-    // === 1. INACTIVITY TIMER (2 minutes) ===
-    // Any of these events reset the timer:
-    const activityEvents = ['mousedown', 'mousemove', 'touchstart', 'touchmove', 'keydown', 'scroll', 'wheel']
-    
-    activityEvents.forEach((evt) => {
-      window.addEventListener(evt, resetTimer, { passive: true })
-    })
-    
-    // Start the initial timer
+    let timer: ReturnType<typeof setTimeout> | null = null
+
+    const logout = async () => {
+      try { await fetch('/api/auth/logout', { method: 'POST' }) } catch {}
+      setUser(null)
+      window.location.reload()
+    }
+
+    const resetTimer = () => {
+      if (timer) clearTimeout(timer)
+      timer = setTimeout(logout, 2 * 60 * 1000)
+    }
+
+    const onVis = () => { if (document.hidden) logout() }
+
+    const events = ['mousedown', 'mousemove', 'touchstart', 'keydown', 'scroll']
+    events.forEach(e => window.addEventListener(e, resetTimer, { passive: true }))
+    document.addEventListener('visibilitychange', onVis)
     resetTimer()
 
-    // === 2. VISIBILITY CHANGE (app hidden / phone locked) ===
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        forceLogout()
-      }
-    }
-
-    // === 3. BLUR (user taps outside webview on Android) ===
-    const handleBlur = () => {
-      setTimeout(() => {
-        if (!document.hasFocus()) {
-          forceLogout()
-        }
-      }, 500)
-    }
-
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    window.addEventListener('blur', handleBlur)
-
     return () => {
-      activityEvents.forEach((evt) => {
-        window.removeEventListener(evt, resetTimer)
-      })
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
-      window.removeEventListener('blur', handleBlur)
-      if (inactivityTimer.current) clearTimeout(inactivityTimer.current)
+      events.forEach(e => window.removeEventListener(e, resetTimer))
+      document.removeEventListener('visibilitychange', onVis)
+      if (timer) clearTimeout(timer)
     }
   }, [user, setUser])
 

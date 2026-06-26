@@ -18,8 +18,8 @@ export function MainApp() {
   const activeChatPeerId = useAppStore((s) => s.activeChatPeerId)
   const setActiveChat = useAppStore((s) => s.setActiveChat)
 
-  // Wire up realtime polling
-  useRealtimePolling()
+  // Wire up realtime polling — disabled temporarily to debug hooks error
+  // useRealtimePolling()
 
   // Swipe-to-go-back gesture: swipe right on the left edge to exit chat
   useEffect(() => {
