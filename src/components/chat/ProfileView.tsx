@@ -6,7 +6,7 @@ import { useState } from 'react'
 
 export function ProfileView() {
   const { user, setUser, setView } = useAppStore()
-        const [copied, setCopied] = useState(false)
+    const [copied, setCopied] = useState(false)
   const [showDownload, setShowDownload] = useState(false)
   const [showEditName, setShowEditName] = useState(false)
   const [showChangePin, setShowChangePin] = useState(false)

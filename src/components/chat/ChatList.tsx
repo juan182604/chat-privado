@@ -7,7 +7,7 @@ import { AddContactDialog } from '@/components/chat/AddContactDialog'
 
 export function ChatList({ onOpenChat }: { onOpenChat: (peerId: string) => void }) {
   const { user, chats, setChats } = useAppStore()
-      const [filter, setFilter] = useState('')
+  const [filter, setFilter] = useState('')
   const [addOpen, setAddOpen] = useState(false)
 
   const filtered = chats.filter(
