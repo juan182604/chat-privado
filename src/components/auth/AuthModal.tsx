@@ -57,6 +57,8 @@ export function AuthModal() {
       setUser(data.user)
       setOpen(false)
       setView({ kind: 'app' })
+      window.location.reload()
+      window.location.reload()
       // No reload — the Zustand store already has the user, the page will
       // re-render from <AiLoginScreen> to <MainApp> immediately.
       // Reloading was causing the session lookup to race with the cookie
@@ -93,7 +95,8 @@ export function AuthModal() {
       setUser(data.user)
       setOpen(false)
       setView({ kind: 'app' })
-      // No reload — same reason as submitLogin.
+      window.location.reload()
+      window.location.reload()
     } finally {
       setLoading(false)
     }
