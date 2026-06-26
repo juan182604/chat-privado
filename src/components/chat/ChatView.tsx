@@ -38,8 +38,7 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
     setMessagesStore: s.setMessages,
     appendMessageStore: s.appendMessage,
     markReadStore: s.markRead,
-  }))
-  }))
+  })))
 
   // LOCAL state instead of Zustand for messages — avoids getSnapshot infinite loop
   const [messages, setMessages] = useState<ChatMessage[]>([])

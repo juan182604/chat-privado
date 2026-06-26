@@ -19,8 +19,7 @@ export function MainApp() {
     setTab: s.setTab,
     activeChatPeerId: s.activeChatPeerId,
     setActiveChat: s.setActiveChat,
-  }))
-  }))
+  })))
 
   // Wire up realtime polling
   useRealtimePolling()
