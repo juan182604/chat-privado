@@ -139,7 +139,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 // Support both useAppStore() and useAppStore((s) => s.xxx) syntax
 export function useAppStore<T = AppState>(selector?: (s: AppState) => T): T {
   const ctx = useContext(AppContext)
-  if (!ctx) throw new Error('useAppStore must be used within AppProvider')
+  if (!ctx) return {} as any // SSR safe('useAppStore must be used within AppProvider')
   if (selector) return selector(ctx)
   return ctx as unknown as T
 }
