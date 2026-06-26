@@ -1,12 +1,26 @@
 'use client'
 
+import { useState, useEffect, useCallback } from 'react'
 import { useAppStore } from '@/lib/store'
 import { Trash2, MessageCircle, Users } from 'lucide-react'
 
 export function ContactsList({ onOpenChat }: { onOpenChat: (peerId: string) => void }) {
-  const friends = useAppStore((s) => s.friends)
-  const setFriends = useAppStore((s) => s.setFriends)
   const user = useAppStore((s) => s.user)
+  const [friends, setFriends] = useState<any[]>([])
+
+  const load = useCallback(async () => {
+    try {
+      const res = await fetch('/api/friends/list')
+      const data = await res.json()
+      if (Array.isArray(data.friends)) setFriends(data.friends)
+    } catch {}
+  }, [])
+
+  useEffect(() => {
+    load()
+    const t = setInterval(load, 5000)
+    return () => clearInterval(t)
+  }, [load])
 
   const remove = async (uniqueId: string) => {
     if (!confirm('¿Eliminar este contacto?')) return
