@@ -4,7 +4,9 @@ import { useEffect } from 'react'
 import { X } from 'lucide-react'
 
 /**
- * Full-screen image viewer. Click anywhere outside the image (or press Esc / the X button) to close.
+ * Full-screen image viewer with a close button (X) at the top.
+ * The image appears in the background (second plane) at full screen.
+ * Tap anywhere outside the image, tap the X, or press Esc to close.
  */
 export function Lightbox({
   src,
@@ -20,7 +22,6 @@ export function Lightbox({
       if (e.key === 'Escape') onClose()
     }
     window.addEventListener('keydown', onKey)
-    // Lock body scroll while open
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
@@ -32,20 +33,35 @@ export function Lightbox({
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-[60] bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[200] bg-black flex items-center justify-center"
+      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
     >
+      {/* Close button (X) at the top center — always visible and tappable */}
       <button
-        onClick={onClose}
-        className="absolute top-4 right-4 w-11 h-11 rounded-full bg-zinc-800/80 hover:bg-zinc-700 flex items-center justify-center text-white z-10"
-        aria-label="Cerrar"
+        onClick={(e) => {
+          e.stopPropagation()
+          onClose()
+        }}
+        className="absolute top-6 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white z-20 backdrop-blur-md shadow-lg"
+        aria-label="Cerrar foto"
+        style={{ touchAction: 'manipulation' }}
       >
-        <X className="w-5 h-5" />
+        <X className="w-6 h-6" />
       </button>
+
+      {/* Full-screen image */}
       <img
         src={src}
         alt={alt}
         onClick={(e) => e.stopPropagation()}
-        className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+        className="max-w-full max-h-full object-contain"
+        style={{ 
+          position: 'relative',
+          zIndex: 1,
+          userSelect: 'none',
+          WebkitUserSelect: 'none',
+          WebkitTouchCallout: 'none',
+        }}
       />
     </div>
   )
