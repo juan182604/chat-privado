@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react'
 import { useAppStore } from '@/lib/store'
-import { useRealtimePolling } from '@/lib/realtime-poll'
 import { ChatList } from '@/components/chat/ChatList'
 import { ChatView } from '@/components/chat/ChatView'
 import { ContactsList } from '@/components/chat/ContactsList'
@@ -17,21 +16,60 @@ export function MainApp() {
   const setTab = useAppStore((s) => s.setTab)
   const activeChatPeerId = useAppStore((s) => s.activeChatPeerId)
   const setActiveChat = useAppStore((s) => s.setActiveChat)
+  const setChats = useAppStore((s) => s.setChats)
+  const setFriends = useAppStore((s) => s.setFriends)
+  const mergeMessages = useAppStore((s) => s.mergeMessages)
+  const markRead = useAppStore((s) => s.markRead)
 
-  useRealtimePolling()
+  // Polling directly in MainApp (not in a separate hook)
+  useEffect(() => {
+    if (!user) return
+    
+    let inFlight = false
+    let lastPoll = new Date(0).toISOString()
+    
+    const poll = async () => {
+      if (inFlight) return
+      inFlight = true
+      try {
+        const res = await fetch(`/api/messages/poll?_t=${Date.now()}&since=${encodeURIComponent(lastPoll)}`, { cache: 'no-store' as RequestCache })
+        if (!res.ok) return
+        const data = await res.json()
+        if (Array.isArray(data.chats)) {
+          setChats(data.chats)
+          setFriends(data.chats.map((c: any) => c.peer))
+        }
+        if (data.serverTime) lastPoll = data.serverTime
+        // Process new messages
+        if (data.newMessages && data.newMessages.length > 0) {
+          for (const m of data.newMessages) {
+            if (!m.peerUniqueId) continue
+            mergeMessages(m.peerUniqueId, {
+              id: m.id, type: m.type, content: m.content, mediaPath: m.mediaPath,
+              callKind: m.callKind, callDuration: m.callDuration, callStatus: m.callStatus,
+              sentAt: m.sentAt, readAt: m.readAt, fromMe: m.fromMe,
+              photoExpiresSeconds: m.photoExpiresSeconds, photoViewStartedAt: m.photoViewStartedAt,
+            })
+          }
+        }
+      } catch {} finally { inFlight = false }
+    }
+    
+    poll() // Initial poll
+    const interval = setInterval(poll, 3000)
+    return () => clearInterval(interval)
+  }, [user, setChats, setFriends, mergeMessages, markRead])
 
   // Swipe-to-go-back
   useEffect(() => {
     if (!activeChatPeerId) return
-    let startX = 0, startY = 0, isTracking = false
+    let startX = 0, isTracking = false
     const onTouchStart = (e: TouchEvent) => {
-      if (e.touches[0].clientX < 40) { startX = e.touches[0].clientX; startY = e.touches[0].clientY; isTracking = true }
+      if (e.touches[0].clientX < 40) { startX = e.touches[0].clientX; isTracking = true }
     }
     const onTouchEnd = (e: TouchEvent) => {
       if (!isTracking) return
-      const dx = e.changedTouches[0].clientX - startX
-      const dy = Math.abs(e.changedTouches[0].clientY - startY)
-      if (dx > 80 && dx > dy * 2) setActiveChat(null)
+      if (e.changedTouches[0].clientX - startX > 80) setActiveChat(null)
       isTracking = false
     }
     window.addEventListener('touchstart', onTouchStart, { passive: true })
@@ -57,8 +95,7 @@ export function MainApp() {
         <nav className="border-t border-zinc-800/60 bg-zinc-950 grid grid-cols-4">
           <TabButton active={tab === 'chats'} onClick={() => setTab('chats')} icon={<MessageCircle className="w-5 h-5" />} label="Chats" />
           <TabButton active={tab === 'contacts'} onClick={() => setTab('contacts')} icon={<Users className="w-5 h-5" />} label="Contactos" />
-          {isAdmin ? <TabButton active={tab === 'admin'} onClick={() => setTab('admin')} icon={<Shield className="w-5 h-5" />} label="Admin" />
-          : <div />}
+          {isAdmin ? <TabButton active={tab === 'admin'} onClick={() => setTab('admin')} icon={<Shield className="w-5 h-5" />} label="Admin" /> : <div />}
           <TabButton active={tab === 'profile'} onClick={() => setTab('profile')} icon={<User className="w-5 h-5" />} label="Perfil" />
         </nav>
       )}
