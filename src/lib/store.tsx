@@ -65,6 +65,7 @@ type AppState = {
   messages: Record<string, ChatMessage[]>
   setMessages: (peerId: string, msgs: ChatMessage[]) => void
   appendMessage: (peerId: string, msg: ChatMessage) => void
+  mergeMessages: (peerId: string, msgs: ChatMessage[]) => void
   markRead: (peerId: string, messageIds: string[]) => void
 }
 
@@ -91,6 +92,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
+  const mergeMessages = useCallback((peerId: string, msgs: ChatMessage[]) => {
+    setMessagesState(prev => {
+      const existing = prev[peerId] ?? []
+      const byId = new Map<string, ChatMessage>()
+      for (const m of existing) byId.set(m.id, m)
+      for (const m of msgs) {
+        const prev2 = byId.get(m.id)
+        if (!prev2) {
+          byId.set(m.id, m)
+        } else {
+          byId.set(m.id, {
+            ...prev2,
+            readAt: m.readAt ?? prev2.readAt,
+            photoViewStartedAt: m.photoViewStartedAt ?? prev2.photoViewStartedAt,
+            photoExpiresSeconds: m.photoExpiresSeconds ?? prev2.photoExpiresSeconds,
+          })
+        }
+      }
+      const next = Array.from(byId.values()).sort((a, b) => new Date(a.sentAt).getTime() - new Date(b.sentAt).getTime())
+      return { ...prev, [peerId]: next }
+    })
+  }, [])
+
   const markRead = useCallback((peerId: string, messageIds: string[]) => {
     setMessagesState(prev => {
       const list = prev[peerId] ?? []
@@ -105,15 +129,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
     <AppContext.Provider value={{
       user, setUser, view, setView, tab, setTab,
       activeChatPeerId, setActiveChat, chats, setChats,
-      friends, setFriends, messages, setMessages, appendMessage, markRead,
+      friends, setFriends, messages, setMessages, appendMessage, mergeMessages, markRead,
     }}>
       {children}
     </AppContext.Provider>
   )
 }
 
-export function useAppStore(): AppState {
+// Support both useAppStore() and useAppStore((s) => s.xxx) syntax
+export function useAppStore<T = AppState>(selector?: (s: AppState) => T): T {
   const ctx = useContext(AppContext)
   if (!ctx) throw new Error('useAppStore must be used within AppProvider')
-  return ctx
+  if (selector) return selector(ctx)
+  return ctx as unknown as T
 }

@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react'
 import { X, Eye, EyeOff, User, KeyRound, AtSign, Phone } from 'lucide-react'
 import { useAppStore } from '@/lib/store'
+const { setUser, setView } = useAppStore()
 
 type Mode = 'login' | 'register'
 
 export function AuthModal() {
-  const setUser = useAppStore((s) => s.setUser)
-  const setView = useAppStore((s) => s.setView)
+  
+  
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<Mode>('login')
   const [error, setError] = useState<string | null>(null)
