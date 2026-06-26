@@ -100,8 +100,9 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
   }, [messages.length])
 
   // Poll for new messages AND refresh conversation (to remove expired photos)
+  // Poll every 1 SECOND so photos with 1s timer are removed immediately
   useEffect(() => {
-    const poll = setInterval(async () => {
+    const poll = async () => {
       try {
         // 1. Check for new messages
         const res = await fetch(`/api/messages/poll?_t=${Date.now()}&since=${new Date(Date.now() - 10000).toISOString()}`)
@@ -128,8 +129,10 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
           setMessages(data2.messages)
         }
       } catch {}
-    }, 3000)
-    return () => clearInterval(poll)
+    }
+    poll() // Run immediately
+    const interval = setInterval(poll, 1000) // Every 1 second
+    return () => clearInterval(interval)
   }, [peerId])
 
   const sendText = async () => {
