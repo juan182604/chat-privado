@@ -154,7 +154,7 @@ export function AuthModal() {
               </label>
               <button
                 onClick={submitLogin}
-                disabled={loading || !loginUser || loginPin.length !== 6}
+                
                 className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed text-white py-2.5 rounded-lg font-semibold text-sm transition-colors"
               >
                 {loading ? 'Entrando…' : 'Entrar'}
