@@ -2,12 +2,11 @@
 
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { X } from 'lucide-react'
 
 /**
- * Full-screen image viewer that renders in a portal at the document body level.
- * This ensures it appears ON TOP of everything (second plane / background),
- * NOT inside the chat bubble where it would duplicate the image.
+ * Full-screen image viewer.
+ * Renders via portal at document.body level with MAXIMUM z-index.
+ * Uses inline styles with !important to override ALL CSS rules.
  */
 export function Lightbox({
   src,
@@ -31,51 +30,57 @@ export function Lightbox({
     }
   }, [onClose])
 
-  // Use portal to render at document.body level — NOT inside the chat bubble
   return createPortal(
     <div
       onClick={onClose}
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 9999,
-        background: '#000',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        position: 'fixed !important' as any,
+        top: '0 !important',
+        left: '0 !important',
+        right: '0 !important',
+        bottom: '0 !important',
+        width: '100vw !important',
+        height: '100vh !important',
+        zIndex: '2147483647 !important',
+        background: '#000 !important',
+        display: 'flex !important',
+        alignItems: 'center !important',
+        justifyContent: 'center !important',
+        overflow: 'visible !important',
+        padding: '0 !important',
+        margin: '0 !important',
       }}
     >
-      {/* Close button (X) at the top center */}
+      {/* Close button (X) */}
       <button
         onClick={(e) => {
           e.stopPropagation()
           onClose()
         }}
         style={{
-          position: 'absolute',
-          top: '24px',
+          position: 'fixed',
+          top: '20px',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '48px',
-          height: '48px',
+          width: '52px',
+          height: '52px',
           borderRadius: '50%',
-          background: 'rgba(255,255,255,0.2)',
-          backdropFilter: 'blur(8px)',
+          background: 'rgba(255,255,255,0.25)',
+          backdropFilter: 'blur(10px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           color: '#fff',
-          zIndex: 10,
+          zIndex: 2147483647,
           border: 'none',
           cursor: 'pointer',
+          fontSize: '24px',
+          fontWeight: 'bold',
           touchAction: 'manipulation',
         }}
         aria-label="Cerrar foto"
       >
-        <X style={{ width: '24px', height: '24px' }} />
+        ✕
       </button>
 
       {/* Full-screen image */}
@@ -86,10 +91,13 @@ export function Lightbox({
         style={{
           maxWidth: '100%',
           maxHeight: '100%',
+          width: 'auto',
+          height: 'auto',
           objectFit: 'contain',
           userSelect: 'none',
           WebkitUserSelect: 'none',
           WebkitTouchCallout: 'none',
+          zIndex: 1,
         }}
       />
     </div>,
