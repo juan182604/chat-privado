@@ -195,7 +195,14 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
     try {
       const up = await fetch('/api/upload/photo', { method: 'POST', body: form })
       const ud = await up.json()
-      if (!up.ok) return
+      if (!up.ok) {
+        alert('No se pudo subir la foto: ' + (ud.error || 'Error desconocido'))
+        return
+      }
+      if (!ud.mediaPath) {
+        alert('Error: el servidor no devolvió la ruta de la foto')
+        return
+      }
       const res = await fetch('/api/messages/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -205,7 +212,11 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
       if (res.ok) {
         setMessages(prev => [...prev, { ...data.message, fromMe: true }])
         appendMessageStore(peerId, { ...data.message, fromMe: true })
+      } else {
+        alert('No se pudo enviar la foto: ' + (data.error || 'Error desconocido'))
       }
+    } catch (e: any) {
+      alert('Error de red al enviar la foto: ' + (e?.message || 'desconocido'))
     } finally {
       setSending(false)
     }
