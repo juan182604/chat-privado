@@ -1,0 +1,6 @@
+
+# Build artifacts
+.gradle/
+app/build/
+gradle-dist/
+local.properties

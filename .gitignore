@@ -66,3 +66,14 @@ scripts/test-*.ts
 download/backup/*.tar.gz
 download/backup/*.apk
 download/backup/README-BACKUP.md
+
+# Android SDK and build artifacts
+android-sdk/
+jdk17/
+android-app/.gradle/
+android-app/app/build/
+android-app/gradle-dist/
+android-app/local.properties
+
+# Scripts
+scripts/
