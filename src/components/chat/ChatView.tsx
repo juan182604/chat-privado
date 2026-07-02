@@ -10,10 +10,14 @@ const PHOTO_TIMER_PRESETS: { label: string; value: number | null }[] = [
   { label: 'Sin límite', value: null },
   { label: '1s', value: 1 },
   { label: '2s', value: 2 },
+  { label: '3s', value: 3 },
+  { label: '4s', value: 4 },
   { label: '5s', value: 5 },
+  { label: '6s', value: 6 },
   { label: '10s', value: 10 },
   { label: '30s', value: 30 },
   { label: '1m', value: 60 },
+  { label: '2m', value: 120 },
   { label: '5m', value: 300 },
   { label: '10m', value: 600 },
   { label: '1h', value: 3600 },
@@ -45,6 +49,7 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
   const [recordSecs, setRecordSecs] = useState(0)
   const [photoToSend, setPhotoToSend] = useState<{ file: File; preview: string } | null>(null)
   const [photoTimer, setPhotoTimer] = useState<number | null>(null)
+  const [customTimerInput, setCustomTimerInput] = useState('')
   const [lightboxSrc, setLightboxSrc] = useState<string | null>(null)
 
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -183,6 +188,7 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
     const preview = URL.createObjectURL(file)
     setPhotoToSend({ file, preview })
     setPhotoTimer(null)
+    setCustomTimerInput('')
   }
 
   const confirmSendPhoto = async () => {
@@ -393,19 +399,61 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
                 <p className="text-xs text-zinc-400 mb-2 flex items-center gap-1">
                   <Clock className="w-3 h-3" /> ¿Cuánto tiempo podrá verla el receptor?
                 </p>
-                <div className="grid grid-cols-5 gap-2">
+                <div className="grid grid-cols-4 gap-2 mb-3">
                   {PHOTO_TIMER_PRESETS.map((p) => (
                     <button
                       key={p.label}
-                      onClick={() => setPhotoTimer(p.value)}
+                      onClick={() => { setPhotoTimer(p.value); setCustomTimerInput('') }}
                       className={`py-2 rounded-lg text-xs font-medium border transition-colors ${
-                        photoTimer === p.value ? 'bg-emerald-600 border-emerald-500 text-white' : 'bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700'
+                        photoTimer === p.value && customTimerInput === ''
+                          ? 'bg-emerald-600 border-emerald-500 text-white'
+                          : 'bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700'
                       }`}
                     >
                       {p.label}
                     </button>
                   ))}
                 </div>
+                {/* Campo personalizado: escribir manualmente los segundos */}
+                <div className="flex items-center gap-2 pt-2 border-t border-zinc-800">
+                  <label className="text-xs text-zinc-400 flex items-center gap-1 whitespace-nowrap">
+                    <Timer className="w-3 h-3" /> Personalizado:
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={28800}
+                    inputMode="numeric"
+                    value={customTimerInput}
+                    onChange={(e) => {
+                      const v = e.target.value
+                      setCustomTimerInput(v)
+                      if (v === '') {
+                        setPhotoTimer(null)
+                      } else {
+                        const n = parseInt(v, 10)
+                        if (!isNaN(n) && n >= 1 && n <= 28800) {
+                          setPhotoTimer(n)
+                        }
+                      }
+                    }}
+                    placeholder="ej: 7, 15, 45, 90..."
+                    className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-1.5 text-sm text-zinc-100 outline-none focus:border-emerald-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                  <span className="text-xs text-zinc-500">segundos</span>
+                </div>
+                {photoTimer !== null && (
+                  <p className="text-[11px] text-emerald-400 mt-2 flex items-center gap-1">
+                    <Timer className="w-3 h-3" />
+                    La foto se borrará en {formatRemaining(photoTimer)} cuando el receptor abra el chat
+                  </p>
+                )}
+                {photoTimer === null && (
+                  <p className="text-[11px] text-zinc-500 mt-2 flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    Sin límite: la foto se borrará a las 10 horas como los demás mensajes
+                  </p>
+                )}
               </div>
               <button onClick={confirmSendPhoto} disabled={sending} className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white py-2.5 rounded-lg font-semibold text-sm">
                 {sending ? 'Enviando…' : 'Enviar foto'}
