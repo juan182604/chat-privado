@@ -17,24 +17,39 @@ import { deleteFile } from '@/lib/storage'
 export async function cleanupExpiredMessages(): Promise<number> {
   const now = new Date().toISOString()
 
-  // --- Operation 1: Mark expired photos (without deleting) ---
+  // --- Operation 1: Mark expired photos AND delete their media files from R2 ---
+  // When the self-destruct timer expires (photoViewStartedAt + photoExpiresSeconds),
+  // we mark the photo as expired (photoExpired = 1) so it disappears from all chats,
+  // AND we immediately delete the media file from R2/disk for true self-destruct.
   const photosToExpire = await query(
-    `SELECT id, "photoViewStartedAt", "photoExpiresSeconds" FROM "Message"
+    `SELECT id, "mediaPath", "photoViewStartedAt", "photoExpiresSeconds" FROM "Message"
      WHERE type = 'photo'
        AND "photoExpiresSeconds" IS NOT NULL
        AND "photoViewStartedAt" IS NOT NULL
        AND "photoExpired" = 0`,
   )
   const expiredPhotoIds: string[] = []
+  const expiredMediaPaths: string[] = []
   for (const m of photosToExpire) {
     if (!m.photoViewStartedAt || !m.photoExpiresSeconds) continue
     const expiresAtMs = new Date(m.photoViewStartedAt).getTime() + m.photoExpiresSeconds * 1000
     if (expiresAtMs < Date.now()) {
       expiredPhotoIds.push(m.id)
+      if (m.mediaPath) expiredMediaPaths.push(m.mediaPath)
     }
   }
   if (expiredPhotoIds.length > 0) {
-    // Update in batches
+    // 🔥 Delete media files from R2/disk immediately (true self-destruct)
+    await Promise.all(
+      expiredMediaPaths.map(async (path) => {
+        try {
+          await deleteFile(path)
+        } catch {
+          // ignore missing files
+        }
+      }),
+    )
+    // Mark photos as expired in batches
     for (let i = 0; i < expiredPhotoIds.length; i += 50) {
       const batch = expiredPhotoIds.slice(i, i + 50)
       const placeholders = batch.map(() => '?').join(',')

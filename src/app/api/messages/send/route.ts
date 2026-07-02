@@ -65,11 +65,16 @@ export async function POST(req: NextRequest) {
     return jsonResponseNoCache({ error: 'Falta mediaPath' }, { status: 400 })
   }
 
+  // ⚡ KEY FIX: Start the photo self-destruct timer IMMEDIATELY when the photo is sent.
+  // The timer counts from the moment the sender sends the photo (they are in the chat).
+  // When the timer expires, the photo is automatically deleted for BOTH sender and receiver.
+  const photoViewStartedAt = photoExpiresSeconds ? sentAt.toISOString() : null
+
   const id = generateId()
   await execute(
     `INSERT INTO "Message" (id, "senderId", "receiverId", type, content, "mediaPath", "callDuration", "callKind", "callStatus", "sentAt", "expiresAt", "photoExpiresSeconds", "photoViewStartedAt", "photoExpired")
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, 0)`,
-    [id, session.user.id, receiverId, type, content, mediaPath, callDuration, callKind, callStatus, sentAt.toISOString(), plus10Hours(sentAt).toISOString(), photoExpiresSeconds],
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
+    [id, session.user.id, receiverId, type, content, mediaPath, callDuration, callKind, callStatus, sentAt.toISOString(), plus10Hours(sentAt).toISOString(), photoExpiresSeconds, photoViewStartedAt],
   )
 
   return jsonResponseNoCache({
@@ -85,7 +90,7 @@ export async function POST(req: NextRequest) {
       fromUniqueId: session.user.uniqueId,
       toUniqueId,
       photoExpiresSeconds,
-      photoViewStartedAt: null,
+      photoViewStartedAt,
       photoExpired: false,
     },
   })

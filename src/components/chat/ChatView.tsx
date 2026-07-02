@@ -415,6 +415,42 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
 function MessageBubble({ msg, myId, onPhotoClick }: { msg: ChatMessage; myId: string; onPhotoClick: (src: string) => void }) {
   const time = new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 
+  // ⚡ Client-side self-destruct timer for photos
+  // If the photo has a timer (photoExpiresSeconds + photoViewStartedAt),
+  // calculate remaining time and remove the photo from local state when it expires.
+  const [photoExpired, setPhotoExpired] = useState(false)
+  const [remaining, setRemaining] = useState<number | null>(null)
+
+  useEffect(() => {
+    // Reset when message changes
+    setPhotoExpired(false)
+    setRemaining(null)
+
+    if (msg.type !== 'photo' || !msg.photoExpiresSeconds || !msg.photoViewStartedAt) return
+
+    const expiryMs = new Date(msg.photoViewStartedAt).getTime() + msg.photoExpiresSeconds * 1000
+
+    const update = () => {
+      const remainingMs = expiryMs - Date.now()
+      if (remainingMs <= 0) {
+        setPhotoExpired(true)
+        setRemaining(0)
+        return false // stop interval
+      }
+      setRemaining(Math.ceil(remainingMs / 1000))
+      return true // continue
+    }
+
+    const stillActive = update()
+    if (!stillActive) return
+
+    const interval = setInterval(() => {
+      if (!update()) clearInterval(interval)
+    }, 200) // check every 200ms for precision
+
+    return () => clearInterval(interval)
+  }, [msg.id, msg.type, msg.photoExpiresSeconds, msg.photoViewStartedAt])
+
   if (msg.type === 'call') {
     return (
       <div className="flex justify-center my-2">
@@ -424,6 +460,22 @@ function MessageBubble({ msg, myId, onPhotoClick }: { msg: ChatMessage; myId: st
             {msg.fromMe ? 'Llamada' : 'Llamada entrante'} · {msg.callStatus}
             {msg.callDuration ? ` · ${Math.floor(msg.callDuration / 60)}:${String(msg.callDuration % 60).padStart(2, '0')}` : ''}
           </span>
+        </div>
+      </div>
+    )
+  }
+
+  // If photo has expired on the client side, show a placeholder bubble
+  if (msg.type === 'photo' && photoExpired) {
+    return (
+      <div className={`flex ${msg.fromMe ? 'justify-end' : 'justify-start'}`}>
+        <div className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${msg.fromMe ? 'bg-emerald-600/40 text-zinc-300 rounded-br-sm' : 'bg-zinc-800/50 text-zinc-400 rounded-bl-sm'}`}>
+          <p className="italic text-xs flex items-center gap-1">
+            <Timer className="w-3 h-3" /> Foto eliminada
+          </p>
+          <p className={`text-[10px] mt-1 ${msg.fromMe ? 'text-emerald-100/50' : 'text-zinc-600'}`}>
+            {time}{msg.fromMe && (msg.readAt ? ' · ✓✓' : ' · ✓')}
+          </p>
         </div>
       </div>
     )
@@ -442,9 +494,9 @@ function MessageBubble({ msg, myId, onPhotoClick }: { msg: ChatMessage; myId: st
               className="rounded-lg max-w-full max-h-72 mb-1 cursor-zoom-in hover:opacity-90 transition-opacity"
             />
             {msg.photoExpiresSeconds && (
-              <p className="text-[10px] mt-1 text-amber-300/90">
-                <Timer className="w-3 h-3 inline mr-1" />
-                {msg.photoViewStartedAt ? 'Viendo' : 'Visible'} {formatRemaining(msg.photoExpiresSeconds)}
+              <p className={`text-[10px] mt-1 flex items-center gap-1 ${remaining !== null && remaining <= 3 ? 'text-red-300 animate-pulse' : 'text-amber-300/90'}`}>
+                <Timer className="w-3 h-3" />
+                {remaining !== null ? `Se borra en ${formatRemaining(remaining)}` : `Visible ${formatRemaining(msg.photoExpiresSeconds)}`}
               </p>
             )}
           </>
