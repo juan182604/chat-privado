@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { query, execute } from '@/lib/db-client'
+import { query, execute, generateId } from '@/lib/db-client'
 import { getSession } from '@/lib/session'
+import { hashPin } from '@/lib/auth-utils'
 import { jsonResponseNoCache } from '@/lib/no-cache'
 
 export async function POST(req: NextRequest) {
@@ -98,8 +99,24 @@ export async function POST(req: NextRequest) {
     return jsonResponseNoCache({ ok: true })
   }
 
+  if (action === 'reset_pin') {
+    const newPin = (body.newPin ?? '').toString()
+    if (!/^\d{6}$/.test(newPin)) {
+      return jsonResponseNoCache({ error: 'El PIN debe ser 6 dígitos' }, { status: 400 })
+    }
+    const pinHash = hashPin(newPin)
+    await execute(
+      `UPDATE "User" SET "pinHash" = ?, "updatedAt" = ? WHERE id = ?`,
+      [pinHash, now, target.id],
+    )
+    // Delete all sessions for this user so they must login with the new PIN
+    await execute(`DELETE FROM "Session" WHERE "userId" = ?`, [target.id])
+    await execute(
+      `INSERT INTO "AuditLog" (id, "actorId", "targetUserId", action, reason, "createdAt") VALUES (?, ?, ?, ?, ?, ?)`,
+      [auditId, session.user.id, target.id, 'reset_pin', `PIN reseteado para ${target.username}`, now],
+    )
+    return jsonResponseNoCache({ ok: true, newPin })
+  }
+
   return jsonResponseNoCache({ error: 'Acción inválida' }, { status: 400 })
 }
-
-// generateId is imported at the top from db-client
-import { generateId } from '@/lib/db-client'
