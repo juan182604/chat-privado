@@ -402,8 +402,8 @@ function AuthModalInline({ onClose }: { onClose: () => void }) {
       setUser(data.user)
       setView({ kind: 'app' })
       onClose()
-      // Force a full page reload so MainApp mounts fresh and loads chats
-      window.location.reload()
+      // Wait a moment for the cookie to be set, then reload
+      setTimeout(() => window.location.reload(), 300)
     } catch { setError('Error de conexión'); setLoading(false) }
   }
 
@@ -419,8 +419,8 @@ function AuthModalInline({ onClose }: { onClose: () => void }) {
       setUser(data.user)
       setView({ kind: 'app' })
       onClose()
-      // Force a full page reload so MainApp mounts fresh and loads chats
-      window.location.reload()
+      // Wait a moment for the cookie to be set, then reload
+      setTimeout(() => window.location.reload(), 300)
     } catch { setError('Error de conexión'); setLoading(false) }
   }
 
