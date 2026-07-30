@@ -351,9 +351,16 @@ export function AdminPanel() {
             {loading && users.length === 0 ? (
               <div className="p-8 text-center text-zinc-500 text-sm">Cargando…</div>
             ) : users.length === 0 ? (
-              <div className="p-8 text-center text-zinc-500 text-sm">Sin usuarios.</div>
+              <div className="p-8 text-center text-zinc-500 text-sm">
+                <p className="mb-2">Sin usuarios visibles.</p>
+                <p className="text-xs text-zinc-600">Si esperabas ver usuarios, abre la consola del navegador (F12) para ver errores.</p>
+              </div>
             ) : (
-              <ul>
+              <>
+                <div className="px-4 py-2 bg-zinc-900/50 border-b border-zinc-800/60 text-xs text-zinc-400">
+                  {users.length} usuario{users.length !== 1 ? 's' : ''} en total
+                </div>
+                <ul>
                 {users.map((u) => (
                   <li
                     key={u.id}
@@ -445,6 +452,7 @@ export function AdminPanel() {
                   </li>
                 ))}
               </ul>
+              </>
             )}
           </div>
         )}
