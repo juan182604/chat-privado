@@ -47,6 +47,8 @@ export function AuthModal() {
       setUser(data.user)
       setView({ kind: 'app' })
       setAuthModalOpen(false)
+      // Force a full page reload so MainApp mounts fresh and loads chats
+      window.location.reload()
     } catch { setError('Error de conexión'); setLoading(false) }
   }
 
@@ -62,6 +64,8 @@ export function AuthModal() {
       setUser(data.user)
       setView({ kind: 'app' })
       setAuthModalOpen(false)
+      // Force a full page reload so MainApp mounts fresh and loads chats
+      window.location.reload()
     } catch { setError('Error de conexión'); setLoading(false) }
   }
 
