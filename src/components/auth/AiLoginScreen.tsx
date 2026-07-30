@@ -402,8 +402,6 @@ function AuthModalInline({ onClose }: { onClose: () => void }) {
       setUser(data.user)
       setView({ kind: 'app' })
       onClose()
-      // Wait a moment for the cookie to be set, then reload
-      setTimeout(() => window.location.reload(), 300)
     } catch { setError('Error de conexión'); setLoading(false) }
   }
 
@@ -419,8 +417,6 @@ function AuthModalInline({ onClose }: { onClose: () => void }) {
       setUser(data.user)
       setView({ kind: 'app' })
       onClose()
-      // Wait a moment for the cookie to be set, then reload
-      setTimeout(() => window.location.reload(), 300)
     } catch { setError('Error de conexión'); setLoading(false) }
   }
 

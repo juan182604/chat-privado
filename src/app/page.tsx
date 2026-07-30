@@ -11,6 +11,7 @@ export default function Home() {
   const setUser = useAppStore((s) => s.setUser)
   const [sessionChecked, setSessionChecked] = useState(false)
 
+  // Check session on mount
   useEffect(() => {
     let cancelled = false
     fetch('/api/auth/me', { cache: 'no-store' as RequestCache })
@@ -20,8 +21,6 @@ export default function Home() {
         if (data && data.user) {
           setUser(data.user)
         } else {
-          // No valid session — just clear local state. Do NOT call logout
-          // because that would delete any in-flight session cookie.
           setUser(null)
         }
         setSessionChecked(true)
@@ -32,6 +31,22 @@ export default function Home() {
       })
     return () => { cancelled = true }
   }, [setUser])
+
+  // When user state changes (e.g. after login), re-verify session
+  useEffect(() => {
+    if (user) {
+      // User is set, verify the session is actually valid on the server
+      fetch('/api/auth/me', { cache: 'no-store' as RequestCache })
+        .then((r) => r.json())
+        .then((data) => {
+          if (!data || !data.user) {
+            // Session not valid on server, clear local state
+            setUser(null)
+          }
+        })
+        .catch(() => {})
+    }
+  }, [user, setUser])
 
   const showApp = sessionChecked && user
 
