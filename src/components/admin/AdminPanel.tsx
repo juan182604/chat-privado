@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAppStore } from '@/lib/store'
 import { VoicePlayer } from '@/components/chat/VoicePlayer'
 import { Lightbox } from '@/components/chat/Lightbox'
-import { Shield, ShieldAlert, Trash2, Lock, Unlock, Eye, Search, Crown, UserCheck, UserX, ScrollText, ArrowLeft, MessageCircle, X, Calendar, Hash, AtSign, User as UserIcon, Clock } from 'lucide-react'
+import { Shield, ShieldAlert, Trash2, Lock, Unlock, Eye, Search, Crown, UserCheck, UserX, ScrollText, ArrowLeft, MessageCircle, X, Calendar, Hash, AtSign, User as UserIcon, Clock, KeyRound } from 'lucide-react'
 
 type AdminUser = {
   id: string
