@@ -1,26 +1,27 @@
 import { query, execute, transaction } from '@/lib/db-client'
 import { deleteFile } from '@/lib/storage'
+import { getAppSettings } from '@/lib/settings'
 
 /**
  * Cleanup operations — runs on every API call to keep the system tidy.
  *
- * 1. Mark photos as photoExpired=true when their custom self-destruct timer
- *    has elapsed (timer starts when receiver opens chat).
+ * 1. ALWAYS: Mark photos as photoExpired=true when their custom self-destruct
+ *    timer has elapsed (timer starts when receiver opens chat).
+ *    Photo self-destruct is INDEPENDENT of the global auto-delete setting —
+ *    photos with a timer ALWAYS self-destruct when their timer expires.
  *
- * 2. DELETE messages whose expiresAt has passed (> 10h since sent if unread,
- *    or > 10h since read). Also deletes associated media files from R2/disk.
- *    This permanently removes the messages from the database, freeing space.
- *    Only users, friendships, sessions, and audit logs are preserved.
+ * 2. ONLY IF ADMIN ENABLED AUTO-DELETE: Delete messages whose expiresAt has
+ *    passed (autoDeleteHours since sent/read). Also deletes media from R2.
+ *    When auto-delete is OFF (default), messages are PERMANENT until admin
+ *    manually deletes them.
  *
  * This function is idempotent and safe to call repeatedly.
  */
 export async function cleanupExpiredMessages(): Promise<number> {
   const now = new Date().toISOString()
 
-  // --- Operation 1: Mark expired photos AND delete their media files from R2 ---
-  // When the self-destruct timer expires (photoViewStartedAt + photoExpiresSeconds),
-  // we mark the photo as expired (photoExpired = 1) so it disappears from all chats,
-  // AND we immediately delete the media file from R2/disk for true self-destruct.
+  // --- Operation 1: ALWAYS expire photos with self-destruct timer ---
+  // This is independent of the global auto-delete setting.
   const photosToExpire = await query(
     `SELECT id, "mediaPath", "photoViewStartedAt", "photoExpiresSeconds" FROM "Message"
      WHERE type = 'photo'
@@ -60,7 +61,14 @@ export async function cleanupExpiredMessages(): Promise<number> {
     }
   }
 
-  // --- Operation 2: DELETE messages past the 10-hour rule ---
+  // --- Operation 2: Auto-delete old messages (ONLY if admin enabled it) ---
+  const settings = await getAppSettings().catch(() => ({ autoDeleteEnabled: false, autoDeleteHours: 10 }))
+  if (!settings.autoDeleteEnabled) {
+    // Auto-delete is OFF — messages are PERMANENT. Do nothing.
+    return 0
+  }
+
+  // Auto-delete is ON — delete messages whose expiresAt has passed
   const expired = await query(
     `SELECT id, "mediaPath" FROM "Message" WHERE "expiresAt" < ?`,
     [now],
@@ -94,7 +102,9 @@ export async function cleanupExpiredMessages(): Promise<number> {
 }
 
 /**
- * Mark messages as read and recompute their expiry to be readAt + 10h.
+ * Mark messages as read.
+ * If auto-delete is enabled, recompute expiry to be readAt + autoDeleteHours.
+ * If auto-delete is disabled, set a far-future expiry (effectively permanent).
  * Also starts the photo self-destruct timer for photo messages with a custom
  * timer that haven't started yet.
  */
@@ -103,7 +113,11 @@ export async function markConversationRead(
   peerUniqueId: string,
 ): Promise<string[]> {
   const now = new Date()
-  const newExpiry = new Date(now.getTime() + 10 * 60 * 60 * 1000).toISOString()
+  const settings = await getAppSettings().catch(() => ({ autoDeleteEnabled: false, autoDeleteHours: 10 }))
+  // If auto-delete is OFF, use a far-future date (year 2099) so messages never expire
+  const newExpiry = settings.autoDeleteEnabled
+    ? new Date(now.getTime() + settings.autoDeleteHours * 60 * 60 * 1000).toISOString()
+    : '2099-12-31T23:59:59.999Z'
 
   // Find owner and peer
   const owners = await query(`SELECT id FROM "User" WHERE "uniqueId" = ?`, [ownerUniqueId])
@@ -130,7 +144,7 @@ export async function markConversationRead(
     }
   }
 
-  // 2. Start photo self-destruct timer
+  // 2. Start photo self-destruct timer (always, regardless of auto-delete setting)
   const photosPending = await query(
     `SELECT id FROM "Message"
      WHERE "receiverId" = ? AND "senderId" = ? AND type = 'photo'

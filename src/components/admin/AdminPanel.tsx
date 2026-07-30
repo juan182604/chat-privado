@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAppStore } from '@/lib/store'
 import { VoicePlayer } from '@/components/chat/VoicePlayer'
 import { Lightbox } from '@/components/chat/Lightbox'
-import { Shield, ShieldAlert, Trash2, Lock, Unlock, Eye, Search, Crown, UserCheck, UserX, ScrollText, ArrowLeft, MessageCircle, X, Calendar, Hash, AtSign, User as UserIcon } from 'lucide-react'
+import { Shield, ShieldAlert, Trash2, Lock, Unlock, Eye, Search, Crown, UserCheck, UserX, ScrollText, ArrowLeft, MessageCircle, X, Calendar, Hash, AtSign, User as UserIcon, Clock } from 'lucide-react'
 
 type AdminUser = {
   id: string
@@ -60,7 +60,7 @@ export function AdminPanel() {
   const [q, setQ] = useState('')
   const [filter, setFilter] = useState<'all' | 'blocked' | 'admin'>('all')
   const [loading, setLoading] = useState(true)
-  const [view, setView] = useState<'users' | 'audit' | 'conversation'>('users')
+  const [view, setView] = useState<'users' | 'audit' | 'conversation' | 'settings'>('users')
 
   // Conversations tab state
   const [convSearch, setConvSearch] = useState('') // search by username OR id
@@ -76,6 +76,13 @@ export function AdminPanel() {
 
   // Users tab: detail drawer for the selected user (shows full name + profile)
   const [detailUser, setDetailUser] = useState<AdminUser | null>(null)
+
+  // Settings tab: auto-delete configuration
+  const [autoDeleteEnabled, setAutoDeleteEnabled] = useState<boolean | null>(null)
+  const [autoDeleteHours, setAutoDeleteHours] = useState<number>(10)
+  const [settingsLoading, setSettingsLoading] = useState(false)
+  const [settingsSaving, setSettingsSaving] = useState(false)
+  const [settingsError, setSettingsError] = useState<string | null>(null)
 
   const isSuper = user?.role === 'super_admin'
 
@@ -175,6 +182,84 @@ export function AdminPanel() {
     return () => { cancelled = true; clearInterval(t) }
   }, [view])
 
+  // Settings tab: load current auto-delete settings
+  useEffect(() => {
+    if (view !== 'settings') return
+    let cancelled = false
+    const run = async () => {
+      setSettingsLoading(true)
+      setSettingsError(null)
+      try {
+        const res = await fetch('/api/admin/settings', { cache: 'no-store' as RequestCache })
+        const data = await res.json()
+        if (cancelled) return
+        if (!res.ok) {
+          setSettingsError(data.error || `Error ${res.status}: ${res.statusText}`)
+          return
+        }
+        if (data.settings) {
+          setAutoDeleteEnabled(data.settings.autoDeleteEnabled)
+          setAutoDeleteHours(data.settings.autoDeleteHours)
+        } else {
+          setSettingsError('Respuesta inesperada del servidor')
+        }
+      } catch (e: any) {
+        if (!cancelled) setSettingsError('Error de red: ' + (e?.message || 'desconocido'))
+      } finally {
+        if (!cancelled) setSettingsLoading(false)
+      }
+    }
+    run()
+    return () => { cancelled = true }
+  }, [view])
+
+  const toggleAutoDelete = async () => {
+    if (autoDeleteEnabled === null) return
+    setSettingsSaving(true)
+    try {
+      const res = await fetch('/api/admin/settings/auto-delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: !autoDeleteEnabled, hours: autoDeleteHours }),
+      })
+      const data = await res.json()
+      if (res.ok && data.settings) {
+        setAutoDeleteEnabled(data.settings.autoDeleteEnabled)
+        setAutoDeleteHours(data.settings.autoDeleteHours)
+        alert(data.message)
+      } else {
+        alert(data.error || 'Error al cambiar configuración')
+      }
+    } finally {
+      setSettingsSaving(false)
+    }
+  }
+
+  const saveAutoDeleteHours = async () => {
+    if (autoDeleteHours < 1 || autoDeleteHours > 720) {
+      alert('Las horas deben estar entre 1 y 720')
+      return
+    }
+    setSettingsSaving(true)
+    try {
+      const res = await fetch('/api/admin/settings/auto-delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled: autoDeleteEnabled, hours: autoDeleteHours }),
+      })
+      const data = await res.json()
+      if (res.ok && data.settings) {
+        setAutoDeleteEnabled(data.settings.autoDeleteEnabled)
+        setAutoDeleteHours(data.settings.autoDeleteHours)
+        alert(`Horas actualizadas a ${data.settings.autoDeleteHours}h`)
+      } else {
+        alert(data.error || 'Error al guardar horas')
+      }
+    } finally {
+      setSettingsSaving(false)
+    }
+  }
+
   const runAction = async (target: AdminUser, action: string, reasonText?: string) => {
     const res = await fetch('/api/admin/user', {
       method: 'POST',
@@ -217,6 +302,12 @@ export function AdminPanel() {
             className={`flex-1 py-1.5 rounded-md text-sm font-medium ${view === 'audit' ? 'bg-zinc-800 text-white' : 'text-zinc-400'}`}
           >
             Auditoría
+          </button>
+          <button
+            onClick={() => setView('settings')}
+            className={`flex-1 py-1.5 rounded-md text-sm font-medium ${view === 'settings' ? 'bg-zinc-800 text-white' : 'text-zinc-400'}`}
+          >
+            Configuración
           </button>
         </div>
         {!isSuper && (
@@ -557,6 +648,129 @@ export function AdminPanel() {
                 ))}
               </ul>
             )}
+          </div>
+        )}
+
+        {view === 'settings' && (
+          <div className="p-4 space-y-4">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Clock className="w-5 h-5 text-amber-400" />
+                <h2 className="text-lg font-semibold text-zinc-100">Auto-eliminación de mensajes</h2>
+              </div>
+              {settingsLoading || (autoDeleteEnabled === null && !settingsError) ? (
+                <p className="text-sm text-zinc-500 text-center py-4">Cargando configuración…</p>
+              ) : settingsError ? (
+                <div className="space-y-3">
+                  <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2 text-sm text-red-300">
+                    <strong>Error:</strong> {settingsError}
+                  </div>
+                  <p className="text-xs text-zinc-400">
+                    Esto puede pasar si tu sesión expiró. Cierra sesión, vuelve a entrar como admin, e inténtalo de nuevo.
+                  </p>
+                  <button
+                    onClick={() => {
+                      setSettingsError(null)
+                      setAutoDeleteEnabled(null)
+                      // Trigger reload by toggling view
+                      setView('users')
+                      setTimeout(() => setView('settings'), 100)
+                    }}
+                    className="bg-zinc-800 hover:bg-zinc-700 text-zinc-100 px-4 py-2 rounded-lg text-sm font-medium"
+                  >
+                    Reintentar
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <p className="text-sm text-zinc-400 mb-4">
+                    Controla si los mensajes se borran automáticamente después de un tiempo, o si permanecen
+                    guardados hasta que los borres manualmente. Esto aplica a <strong>todos los chats</strong> de la plataforma.
+                  </p>
+
+                  {/* Toggle principal */}
+                  <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-4 mb-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-zinc-100">
+                          {autoDeleteEnabled ? 'Auto-eliminación ACTIVADA' : 'Auto-eliminación DESACTIVADA'}
+                        </p>
+                        <p className="text-xs text-zinc-400 mt-1">
+                          {autoDeleteEnabled
+                            ? `Los mensajes se borran solos después de ${autoDeleteHours} horas.`
+                            : 'Los mensajes son PERMANENTES hasta que los borres manualmente.'}
+                        </p>
+                      </div>
+                      <button
+                        onClick={toggleAutoDelete}
+                        disabled={settingsSaving}
+                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                          autoDeleteEnabled
+                            ? 'bg-red-600 hover:bg-red-500 text-white'
+                            : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                        } disabled:opacity-50`}
+                      >
+                        {settingsSaving ? 'Guardando…' : autoDeleteEnabled ? 'APAGAR' : 'ENCENDER'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Configuración de horas (solo visible si auto-delete está activo) */}
+                  {autoDeleteEnabled && (
+                    <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-4">
+                      <p className="text-sm font-medium text-zinc-100 mb-2">Tiempo antes del borrado</p>
+                      <p className="text-xs text-zinc-400 mb-3">
+                        Número de horas que un mensaje permanece antes de borrarse automáticamente.
+                        Cuando un mensaje es leído, su contador se reinicia.
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min={1}
+                          max={720}
+                          value={autoDeleteHours}
+                          onChange={(e) => setAutoDeleteHours(parseInt(e.target.value || '0', 10) || 0)}
+                          className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 outline-none focus:border-amber-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+                        <span className="text-sm text-zinc-400">horas</span>
+                        <button
+                          onClick={saveAutoDeleteHours}
+                          disabled={settingsSaving}
+                          className="bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm font-semibold"
+                        >
+                          Guardar
+                        </button>
+                      </div>
+                      {/* Presets rápidos */}
+                      <div className="grid grid-cols-5 gap-2 mt-3">
+                        {[1, 6, 10, 24, 72].map((h) => (
+                          <button
+                            key={h}
+                            onClick={() => setAutoDeleteHours(h)}
+                            className={`py-1.5 rounded-md text-xs font-medium border transition-colors ${
+                              autoDeleteHours === h
+                                ? 'bg-amber-600 border-amber-500 text-white'
+                                : 'bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-800'
+                            }`}
+                          >
+                            {h === 72 ? '3 días' : h === 24 ? '1 día' : `${h}h`}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Nota informativa */}
+                  <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mt-4">
+                    <p className="text-xs text-blue-300">
+                      <strong>Nota:</strong> Las fotos con timer de auto-destrucción (1s, 5s, etc.) siempre
+                      se borran cuando se cumple su tiempo, sin importar esta configuración.
+                      Esta configuración solo afecta a mensajes de texto, fotos sin timer y notas de voz.
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         )}
       </div>

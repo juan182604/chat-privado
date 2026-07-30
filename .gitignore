@@ -77,3 +77,4 @@ android-app/local.properties
 
 # Scripts
 scripts/
+tool-results/

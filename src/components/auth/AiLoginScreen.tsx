@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Bot, Send } from 'lucide-react'
+import { Bot, Send, X, Eye, EyeOff, Phone } from 'lucide-react'
+import { useAppStore } from '@/lib/store'
 
 type AiMsg = {
   id: string
@@ -20,6 +21,14 @@ export function AiLoginScreen() {
   const [input, setInput] = useState('')
   const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [downloadPrompt, setDownloadPrompt] = useState<null | 'android' | 'ios'>(null)
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen)
+
+  // Keep a ref to the latest startHold/cancelHold so the native event listeners
+  // always call the current version. This is needed for iOS Safari which requires
+  // native addEventListener with { passive: false } to make preventDefault work.
+  const startHoldRef = useRef<(m: AiMsg) => void>(() => {})
+  const cancelHoldRef = useRef<() => void>(() => {})
 
   useEffect(() => {
     return () => {
@@ -55,20 +64,25 @@ export function AiLoginScreen() {
 
   const startHold = (msg: AiMsg) => {
     if (msg.action !== 'auth' && msg.action !== 'download') return
+    // Clear any existing timer
+    if (holdTimer.current) {
+      clearTimeout(holdTimer.current)
+      holdTimer.current = null
+    }
     // Start the 5-second timer. No visual feedback — nothing shows.
     holdTimer.current = setTimeout(() => {
       if (msg.action === 'auth') {
-        window.dispatchEvent(new CustomEvent('nx:show-auth'))
+        // Use LOCAL state (same mechanism as downloadPrompt which works on iPhone)
+        // Plus also set the Zustand store as backup
+        setShowAuthModal(true)
+        setAuthModalOpen(true)
       } else if (msg.action === 'download') {
         // Detect platform to decide which modal to show.
-        // The APK is NOT downloaded automatically — the user must click the
-        // "Descargar APK" button inside the modal.
         const ua = navigator.userAgent.toLowerCase()
         const isIOS = /iphone|ipad|ipod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
         if (isIOS) {
           setDownloadPrompt('ios')
         } else {
-          // Android (or desktop): show the modal with a manual download button
           setDownloadPrompt('android')
         }
       }
@@ -81,6 +95,10 @@ export function AiLoginScreen() {
       holdTimer.current = null
     }
   }
+
+  // Keep refs updated with latest functions
+  startHoldRef.current = startHold
+  cancelHoldRef.current = cancelHold
 
   return (
     <div className="h-full bg-zinc-950 text-zinc-100 flex flex-col">
@@ -101,35 +119,7 @@ export function AiLoginScreen() {
       <main className="flex-1 overflow-y-auto">
         <div className="max-w-2xl mx-auto px-4 py-6 space-y-3">
           {messages.map((m) => (
-            <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div
-                className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed select-none ${
-                  m.role === 'user'
-                    ? 'bg-emerald-600 text-white rounded-br-sm'
-                    : 'bg-zinc-800 text-zinc-100 rounded-bl-sm border border-zinc-700/50'
-                }`}
-                onMouseDown={() => m.role === 'ai' && startHold(m)}
-                onMouseUp={cancelHold}
-                onMouseLeave={cancelHold}
-                onTouchStart={(e) => {
-                  if (m.role === 'ai') {
-                    e.preventDefault()
-                    startHold(m)
-                  }
-                }}
-                onTouchEnd={cancelHold}
-                onTouchCancel={cancelHold}
-                style={{ cursor: m.role === 'ai' && m.action ? 'pointer' : 'default' }}
-              >
-                {m.role === 'ai' && (
-                  <div className="flex items-center gap-2 mb-1 opacity-70">
-                    <Bot className="w-3 h-3" />
-                    <span className="text-[10px] uppercase tracking-wide">IA</span>
-                  </div>
-                )}
-                <p>{m.text}</p>
-              </div>
-            </div>
+            <HoldableBubble key={m.id} msg={m} startHoldRef={startHoldRef} cancelHoldRef={cancelHoldRef} />
           ))}
         </div>
       </main>
@@ -160,6 +150,127 @@ export function AiLoginScreen() {
           onClose={() => setDownloadPrompt(null)}
         />
       )}
+
+      {/* Auth modal — rendered locally so it works on iPhone (same mechanism as downloadPrompt) */}
+      {showAuthModal && (
+        <AuthModalInline onClose={() => setShowAuthModal(false)} />
+      )}
+    </div>
+  )
+}
+
+/**
+ * HoldableBubble — message bubble that supports hold-for-5-seconds on iPhone.
+ *
+ * iOS Safari requires native addEventListener with { passive: false } to make
+ * preventDefault work on touch events. React's onTouchStart is passive by default
+ * in iOS, so we use native event listeners here.
+ *
+ * Visual appearance is identical to the original — no buttons, no progress bar,
+ * no instructions text.
+ */
+function HoldableBubble({
+  msg,
+  startHoldRef,
+  cancelHoldRef,
+}: {
+  msg: AiMsg
+  startHoldRef: React.MutableRefObject<(m: AiMsg) => void>
+  cancelHoldRef: React.MutableRefObject<() => void>
+}) {
+  const bubbleRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = bubbleRef.current
+    if (!el) return
+    // Only AI messages with an action are holdable
+    if (msg.role !== 'ai' || !msg.action) return
+
+    let touchActive = false
+
+    const handleTouchStart = (e: TouchEvent) => {
+      // preventDefault stops the iOS context menu, scroll, and 300ms delay.
+      // MUST be passive: false to work on iOS Safari.
+      e.preventDefault()
+      touchActive = true
+      startHoldRef.current(msg)
+    }
+    const handleTouchEnd = (e: TouchEvent) => {
+      e.preventDefault()
+      touchActive = false
+      cancelHoldRef.current()
+    }
+    const handleTouchCancel = () => {
+      touchActive = false
+      cancelHoldRef.current()
+    }
+    const handleTouchMove = () => {
+      // If finger moves, cancel the hold (iOS sometimes fires touchmove)
+      if (touchActive) {
+        cancelHoldRef.current()
+      }
+    }
+    const handleMouseDown = () => {
+      startHoldRef.current(msg)
+    }
+    const handleMouseUp = () => {
+      cancelHoldRef.current()
+    }
+    const handleMouseLeave = () => {
+      cancelHoldRef.current()
+    }
+    const handleContextMenu = (e: Event) => {
+      // Block iOS long-press context menu (callout)
+      e.preventDefault()
+    }
+
+    // touchstart/touchend MUST be non-passive to call preventDefault on iOS
+    el.addEventListener('touchstart', handleTouchStart, { passive: false })
+    el.addEventListener('touchend', handleTouchEnd, { passive: false })
+    el.addEventListener('touchcancel', handleTouchCancel, { passive: false })
+    el.addEventListener('touchmove', handleTouchMove, { passive: false })
+    el.addEventListener('mousedown', handleMouseDown)
+    el.addEventListener('mouseup', handleMouseUp)
+    el.addEventListener('mouseleave', handleMouseLeave)
+    el.addEventListener('contextmenu', handleContextMenu)
+
+    return () => {
+      el.removeEventListener('touchstart', handleTouchStart)
+      el.removeEventListener('touchend', handleTouchEnd)
+      el.removeEventListener('touchcancel', handleTouchCancel)
+      el.removeEventListener('touchmove', handleTouchMove)
+      el.removeEventListener('mousedown', handleMouseDown)
+      el.removeEventListener('mouseup', handleMouseUp)
+      el.removeEventListener('mouseleave', handleMouseLeave)
+      el.removeEventListener('contextmenu', handleContextMenu)
+    }
+  }, [msg, startHoldRef, cancelHoldRef])
+
+  return (
+    <div className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+      <div
+        ref={bubbleRef}
+        className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed select-none ${
+          msg.role === 'user'
+            ? 'bg-emerald-600 text-white rounded-br-sm'
+            : 'bg-zinc-800 text-zinc-100 rounded-bl-sm border border-zinc-700/50'
+        }`}
+        style={{
+          cursor: msg.role === 'ai' && msg.action ? 'pointer' : 'default',
+          WebkitTouchCallout: 'none',
+          WebkitUserSelect: 'none',
+          userSelect: 'none',
+          touchAction: 'manipulation',
+        }}
+      >
+        {msg.role === 'ai' && (
+          <div className="flex items-center gap-2 mb-1 opacity-70">
+            <Bot className="w-3 h-3" />
+            <span className="text-[10px] uppercase tracking-wide">IA</span>
+          </div>
+        )}
+        <p>{msg.text}</p>
+      </div>
     </div>
   )
 }
@@ -252,6 +363,102 @@ function DownloadModal({ platform, onClose }: { platform: 'android' | 'ios'; onC
         >
           Entendido
         </button>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * AuthModalInline — Login/Register modal rendered directly inside AiLoginScreen.
+ * Uses LOCAL state only (no Zustand, no CustomEvent) so it works reliably on iPhone.
+ * This is the exact same modal as AuthModal but self-contained.
+ */
+function AuthModalInline({ onClose }: { onClose: () => void }) {
+  const setUser = useAppStore((s) => s.setUser)
+  const setView = useAppStore((s) => s.setView)
+  const [mode, setMode] = useState<'login' | 'register'>('login')
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [showPin, setShowPin] = useState(false)
+  const [stayOpen, setStayOpen] = useState(true)
+  const [loginUser, setLoginUser] = useState('')
+  const [loginPin, setLoginPin] = useState('')
+  const [rUser, setRUser] = useState('')
+  const [rFirst, setRFirst] = useState('')
+  const [rLast, setRLast] = useState('')
+  const [rPin, setRPin] = useState('')
+  const [rPin2, setRPin2] = useState('')
+
+  const submitLogin = async () => {
+    setError(null)
+    const username = loginUser.trim().toLowerCase()
+    const pin = loginPin.trim()
+    if (!username || pin.length !== 6) { setError('Usuario y PIN de 6 dígitos requeridos'); return }
+    setLoading(true)
+    try {
+      const res = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, pin, persistent: stayOpen }) })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error || 'Error'); setLoading(false); return }
+      setUser(data.user)
+      setView({ kind: 'app' })
+      onClose()
+    } catch { setError('Error de conexión'); setLoading(false) }
+  }
+
+  const submitRegister = async () => {
+    setError(null)
+    if (rPin !== rPin2) { setError('Los PIN no coinciden'); return }
+    if (!rUser || !rFirst || !rLast || rPin.length !== 6) { setError('Todos los campos son requeridos'); return }
+    setLoading(true)
+    try {
+      const res = await fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: rUser.trim().toLowerCase(), firstName: rFirst.trim(), lastName: rLast.trim(), pin: rPin, persistent: stayOpen }) })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error || 'Error'); setLoading(false); return }
+      setUser(data.user)
+      setView({ kind: 'app' })
+      onClose()
+    } catch { setError('Error de conexión'); setLoading(false) }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-zinc-900 border border-zinc-700 rounded-2xl w-full max-w-md shadow-2xl">
+        <div className="flex items-center justify-between border-b border-zinc-800 px-5 py-3">
+          <h2 className="font-semibold text-zinc-100">{mode === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}</h2>
+          <button onClick={onClose} className="text-zinc-400 hover:text-zinc-100"><X className="w-5 h-5" /></button>
+        </div>
+        <div className="px-5 py-5 space-y-4">
+          {error && <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2 text-sm text-red-300">{error}</div>}
+          {mode === 'login' ? (
+            <>
+              <label className="block"><span className="block text-[11px] uppercase text-zinc-500 mb-1">Usuario</span>
+                <input value={loginUser} onChange={(e) => setLoginUser(e.target.value.toLowerCase())} placeholder="tu_usuario" className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm outline-none focus:border-emerald-500 text-white" /></label>
+              <label className="block"><span className="block text-[11px] uppercase text-zinc-500 mb-1">PIN (6 dígitos)</span>
+                <div className="flex items-center gap-2 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2">
+                  <input type={showPin ? 'text' : 'password'} inputMode="numeric" maxLength={6} value={loginPin} onChange={(e) => setLoginPin(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder="000000" className="bg-transparent flex-1 outline-none text-sm tracking-widest text-white" />
+                  <button type="button" onClick={() => setShowPin(v => !v)} className="text-zinc-400">{showPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}</button>
+                </div></label>
+              <label className="flex items-center gap-2 text-sm text-zinc-300"><input type="checkbox" checked={stayOpen} onChange={e => setStayOpen(e.target.checked)} className="accent-emerald-500" />Mantener sesión abierta</label>
+              <button onClick={submitLogin} disabled={loading || !loginUser || loginPin.length !== 6} className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white py-2.5 rounded-lg font-semibold text-sm">{loading ? 'Entrando…' : 'Entrar'}</button>
+              <p className="text-center text-sm text-zinc-400">¿No tienes cuenta? <button onClick={() => { setMode('register'); setError(null) }} className="text-emerald-400 hover:underline">Regístrate</button></p>
+            </>
+          ) : (
+            <>
+              <label className="block"><span className="block text-[11px] uppercase text-zinc-500 mb-1">Usuario</span>
+                <input value={rUser} onChange={(e) => setRUser(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))} placeholder="3-20: minúsculas, números, _" maxLength={20} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm outline-none focus:border-emerald-500 text-white" /></label>
+              <div className="grid grid-cols-2 gap-3">
+                <label className="block"><span className="block text-[11px] uppercase text-zinc-500 mb-1">Nombre</span><input value={rFirst} onChange={(e) => setRFirst(e.target.value)} maxLength={40} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm outline-none focus:border-emerald-500 text-white" /></label>
+                <label className="block"><span className="block text-[11px] uppercase text-zinc-500 mb-1">Apellido</span><input value={rLast} onChange={(e) => setRLast(e.target.value)} maxLength={40} className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm outline-none focus:border-emerald-500 text-white" /></label>
+              </div>
+              <label className="block"><span className="block text-[11px] uppercase text-zinc-500 mb-1">PIN (6 dígitos)</span><input type={showPin ? 'text' : 'password'} inputMode="numeric" maxLength={6} value={rPin} onChange={(e) => setRPin(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder="000000" className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm outline-none focus:border-emerald-500 text-white tracking-widest" /></label>
+              <label className="block"><span className="block text-[11px] uppercase text-zinc-500 mb-1">Confirmar PIN</span><input type={showPin ? 'text' : 'password'} inputMode="numeric" maxLength={6} value={rPin2} onChange={(e) => setRPin2(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder="000000" className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm outline-none focus:border-emerald-500 text-white tracking-widest" /></label>
+              <label className="flex items-center gap-2 text-sm text-zinc-300"><input type="checkbox" checked={stayOpen} onChange={e => setStayOpen(e.target.checked)} className="accent-emerald-500" />Mantener sesión abierta</label>
+              <button onClick={submitRegister} disabled={loading || !rUser || !rFirst || !rLast || rPin.length !== 6 || rPin !== rPin2} className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white py-2.5 rounded-lg font-semibold text-sm">{loading ? 'Creando…' : 'Crear cuenta'}</button>
+              <p className="text-center text-sm text-zinc-400">¿Ya tienes cuenta? <button onClick={() => { setMode('login'); setError(null) }} className="text-emerald-400 hover:underline">Inicia sesión</button></p>
+            </>
+          )}
+        </div>
+        <div className="border-t border-zinc-800 px-5 py-3 text-center text-[11px] text-zinc-500"><Phone className="inline w-3 h-3 mr-1" />Android, iOS y web — mismo ID, misma cuenta.</div>
       </div>
     </div>
   )

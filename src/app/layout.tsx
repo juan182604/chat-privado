@@ -30,7 +30,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="es" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
+        <div style={{ height: '100vh', height: '100dvh', overflow: 'hidden' }}>
+          {children}
+        </div>
         <ServiceWorkerRegister />
       </body>
     </html>

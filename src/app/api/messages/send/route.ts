@@ -4,6 +4,7 @@ import { getSession } from '@/lib/session'
 import { plus10Hours } from '@/lib/auth-utils'
 import { cleanupExpiredMessages } from '@/lib/cleanup'
 import { jsonResponseNoCache } from '@/lib/no-cache'
+import { getAppSettings } from '@/lib/settings'
 
 export async function POST(req: NextRequest) {
   const session = await getSession()
@@ -68,11 +69,17 @@ export async function POST(req: NextRequest) {
   // El timer de auto-destrucción empieza cuando el RECEPTOR abra el chat (no al enviar).
   // photoViewStartedAt se establece en NULL aquí, y se actualiza cuando el receptor
   // abre el chat (ver markConversationRead en cleanup.ts).
+  // Si auto-delete está apagado, expiresAt es futuro lejano (mensajes permanentes).
+  const settings = await getAppSettings().catch(() => ({ autoDeleteEnabled: false, autoDeleteHours: 10 }))
+  const expiresAt = settings.autoDeleteEnabled
+    ? plus10Hours(sentAt).toISOString()
+    : '2099-12-31T23:59:59.999Z'
+
   const id = generateId()
   await execute(
     `INSERT INTO "Message" (id, "senderId", "receiverId", type, content, "mediaPath", "callDuration", "callKind", "callStatus", "sentAt", "expiresAt", "photoExpiresSeconds", "photoViewStartedAt", "photoExpired")
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, 0)`,
-    [id, session.user.id, receiverId, type, content, mediaPath, callDuration, callKind, callStatus, sentAt.toISOString(), plus10Hours(sentAt).toISOString(), photoExpiresSeconds],
+    [id, session.user.id, receiverId, type, content, mediaPath, callDuration, callKind, callStatus, sentAt.toISOString(), expiresAt, photoExpiresSeconds],
   )
 
   return jsonResponseNoCache({

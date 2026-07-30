@@ -52,6 +52,8 @@ export type ChatMessage = {
 type AppState = {
   user: CurrentUser | null
   setUser: (u: CurrentUser | null) => void
+  authModalOpen: boolean
+  setAuthModalOpen: (open: boolean) => void
   view: { kind: 'ai' } | { kind: 'app' }
   setView: (v: AppState['view']) => void
   tab: 'chats' | 'contacts' | 'calls' | 'profile' | 'admin'
@@ -75,6 +77,8 @@ const EMPTY_ARRAY: any[] = []
 export const useAppStore = create<AppState>((set) => ({
   user: null,
   setUser: (u) => set({ user: u }),
+  authModalOpen: false,
+  setAuthModalOpen: (open) => set({ authModalOpen: open }),
   view: { kind: 'ai' },
   setView: (v) => set({ view: v }),
   tab: 'chats',

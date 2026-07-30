@@ -9,7 +9,8 @@ type Mode = 'login' | 'register'
 export function AuthModal() {
   const setUser = useAppStore((s) => s.setUser)
   const setView = useAppStore((s) => s.setView)
-  const [open, setOpen] = useState(false)
+  const open = useAppStore((s) => s.authModalOpen)
+  const setAuthModalOpen = useAppStore((s) => s.setAuthModalOpen)
   const [mode, setMode] = useState<Mode>('login')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -23,13 +24,15 @@ export function AuthModal() {
   const [rPin, setRPin] = useState('')
   const [rPin2, setRPin2] = useState('')
 
+  // Keep listening to the old CustomEvent for backwards compatibility,
+  // but also use the Zustand store as the primary mechanism.
   useEffect(() => {
-    const handler = () => { setError(null); setOpen(true) }
+    const handler = () => { setError(null); setAuthModalOpen(true) }
     window.addEventListener('nx:show-auth', handler)
     return () => window.removeEventListener('nx:show-auth', handler)
-  }, [])
+  }, [setAuthModalOpen])
 
-  const close = () => { setOpen(false); setError(null) }
+  const close = () => { setAuthModalOpen(false); setError(null) }
 
   const submitLogin = async () => {
     setError(null)
@@ -43,7 +46,7 @@ export function AuthModal() {
       if (!res.ok) { setError(data.error || 'Error'); setLoading(false); return }
       setUser(data.user)
       setView({ kind: 'app' })
-      setOpen(false)
+      setAuthModalOpen(false)
     } catch { setError('Error de conexión'); setLoading(false) }
   }
 
@@ -58,7 +61,7 @@ export function AuthModal() {
       if (!res.ok) { setError(data.error || 'Error'); setLoading(false); return }
       setUser(data.user)
       setView({ kind: 'app' })
-      setOpen(false)
+      setAuthModalOpen(false)
     } catch { setError('Error de conexión'); setLoading(false) }
   }
 
