@@ -89,8 +89,6 @@ export function AdminPanel() {
   const isSuper = user?.role === 'super_admin'
 
   // Polling: refresh users every 2 seconds so new registrations appear instantly.
-  // The fetch includes cache:'no-store' to bypass any browser/CDN cache,
-  // so users registered from any other browser/IP/device show up here immediately.
   useEffect(() => {
     if (view !== 'users') return
     let cancelled = false
@@ -105,10 +103,17 @@ export function AdminPanel() {
         if (filter === 'blocked') url += 'blocked=1&'
         if (filter === 'admin') url += 'role=admin&'
         const res = await fetch(url, { cache: 'no-store' as RequestCache })
+        if (!res.ok) {
+          console.error('Admin poll error:', res.status, await res.text())
+          if (!cancelled) setLoading(false)
+          return
+        }
         const data = await res.json()
         if (!cancelled && Array.isArray(data.users)) {
           setUsers(data.users)
         }
+      } catch (e) {
+        console.error('Admin poll fetch error:', e)
       } finally {
         inFlight = false
         if (cancelled) return
