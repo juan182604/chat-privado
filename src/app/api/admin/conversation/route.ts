@@ -25,14 +25,28 @@ export async function GET(req: NextRequest) {
   const a = aRows[0]
   const b = bRows[0]
 
+  // PERMISSION CHECK:
+  // - super_admin can see ALL conversations
+  // - regular admin CANNOT see conversations where either party is an admin
+  const isSuperAdmin = session.user.role === 'super_admin'
+  if (!isSuperAdmin && (a.role === 'admin' || a.role === 'super_admin' || b.role === 'admin' || b.role === 'super_admin')) {
+    return jsonResponseNoCache({
+      error: 'No tienes permiso para ver conversaciones que involucran a otros admins. Solo el super admin puede verlas.',
+      a: { uniqueId: a.uniqueId, username: a.username, firstName: a.firstName, lastName: a.lastName, role: a.role },
+      b: { uniqueId: b.uniqueId, username: b.username, firstName: b.firstName, lastName: b.lastName, role: b.role },
+      messages: [],
+    })
+  }
+
+  // Get ALL messages including expired photos (admin can see history)
   const messages = await query(
     `SELECT * FROM "Message"
-     WHERE "expiresAt" > ? AND (
+     WHERE (
        ("senderId" = ? AND "receiverId" = ?) OR
        ("senderId" = ? AND "receiverId" = ?)
      )
      ORDER BY "sentAt" ASC LIMIT 500`,
-    [new Date().toISOString(), a.id, b.id, b.id, a.id],
+    [a.id, b.id, b.id, a.id],
   )
 
   return jsonResponseNoCache({
@@ -49,6 +63,9 @@ export async function GET(req: NextRequest) {
       sentAt: m.sentAt,
       readAt: m.readAt,
       fromA: m.senderId === a.id,
+      photoExpiresSeconds: m.photoExpiresSeconds,
+      photoViewStartedAt: m.photoViewStartedAt,
+      photoExpired: !!m.photoExpired,
     })),
   })
 }
