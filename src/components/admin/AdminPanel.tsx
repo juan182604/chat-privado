@@ -1125,7 +1125,6 @@ function AdminMessageBubble({
               onClick={() => setLightboxOpen(true)}
               className="rounded max-w-full max-h-48 cursor-zoom-in hover:opacity-90 transition-opacity"
               onError={(e) => {
-                // If image fails to load (file deleted from R2), show fallback
                 const target = e.target as HTMLImageElement
                 target.style.display = 'none'
                 const fallback = target.nextElementSibling as HTMLElement
@@ -1134,7 +1133,7 @@ function AdminMessageBubble({
             />
             <div style={{ display: 'none' }} className="bg-zinc-800 border border-zinc-700 rounded-lg p-4 text-center">
               <ImageIcon className="w-8 h-8 text-zinc-500 mx-auto mb-1" />
-              <p className="text-xs text-zinc-400">Imagen no disponible</p>
+              <p className="text-xs text-zinc-400">Imagen no disponible (archivo borrado)</p>
             </div>
             <p className="text-[10px] text-zinc-500 mt-1 italic">Haz clic en la imagen para ampliar</p>
             {photoTimerLabel && (
@@ -1146,16 +1145,25 @@ function AdminMessageBubble({
           </>
         )}
         {m.type === 'photo' && m.mediaPath && m.photoExpired && (
-          <div className="bg-zinc-800/50 border border-red-500/30 rounded-lg p-3 text-center">
-            <ImageIcon className="w-6 h-6 text-red-400/50 mx-auto mb-1" />
-            <p className="text-xs text-red-400">Foto auto-destruída</p>
+          <div className="bg-red-500/10 border border-red-500/40 rounded-lg p-4 text-center my-1">
+            <ImageIcon className="w-10 h-10 text-red-400/60 mx-auto mb-2" />
+            <p className="text-sm text-red-300 font-semibold">📷 Foto auto-destruída</p>
+            <p className="text-[10px] text-red-400/70 mt-1">La foto fue enviada con timer y ya se borró</p>
             {photoTimerLabel && (
-              <p className={`text-[10px] mt-1 ${photoTimerLabel.color}`}>{photoTimerLabel.text}</p>
+              <p className={`text-[10px] mt-2 ${photoTimerLabel.color}`}>{photoTimerLabel.text}</p>
             )}
           </div>
         )}
         {m.type === 'photo' && !m.mediaPath && (
-          <p className="text-xs text-zinc-500 italic">Foto (sin archivo)</p>
+          <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-3 text-center">
+            <ImageIcon className="w-8 h-8 text-zinc-500 mx-auto mb-1" />
+            <p className="text-xs text-zinc-400">Foto (sin archivo)</p>
+          </div>
+        )}
+        {m.type === 'screenshot' && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2 text-center">
+            <p className="text-xs text-amber-300">📷 {m.content || 'Captura de pantalla'}</p>
+          </div>
         )}
         {m.type === 'voice' && m.mediaPath && (
           <div className="py-1">
