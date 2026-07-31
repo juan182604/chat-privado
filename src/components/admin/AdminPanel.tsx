@@ -1117,7 +1117,7 @@ function AdminMessageBubble({
           {m.readAt && <span className="text-emerald-500">· leído</span>}
         </p>
         {m.type === 'text' && <p className="text-zinc-100 break-words whitespace-pre-wrap">{m.content}</p>}
-        {m.type === 'photo' && m.mediaPath && !m.photoExpired && (
+        {m.type === 'photo' && m.mediaPath && (
           <>
             <img
               src={`/api/media?path=${encodeURIComponent(m.mediaPath)}`}
@@ -1142,17 +1142,12 @@ function AdminMessageBubble({
                 {photoTimerLabel.text}
               </p>
             )}
-          </>
-        )}
-        {m.type === 'photo' && m.mediaPath && m.photoExpired && (
-          <div className="bg-red-500/10 border border-red-500/40 rounded-lg p-4 text-center my-1">
-            <ImageIcon className="w-10 h-10 text-red-400/60 mx-auto mb-2" />
-            <p className="text-sm text-red-300 font-semibold">📷 Foto auto-destruída</p>
-            <p className="text-[10px] text-red-400/70 mt-1">La foto fue enviada con timer y ya se borró</p>
-            {photoTimerLabel && (
-              <p className={`text-[10px] mt-2 ${photoTimerLabel.color}`}>{photoTimerLabel.text}</p>
+            {m.photoExpired && (
+              <p className="text-[10px] mt-1 text-amber-400 italic">
+                ⚠️ Esta foto ya se auto-destruyó para los usuarios (pero el admin puede verla)
+              </p>
             )}
-          </div>
+          </>
         )}
         {m.type === 'photo' && !m.mediaPath && (
           <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-3 text-center">

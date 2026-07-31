@@ -40,17 +40,11 @@ export async function cleanupExpiredMessages(): Promise<number> {
     }
   }
   if (expiredPhotoIds.length > 0) {
-    // 🔥 Delete media files from R2/disk immediately (true self-destruct)
-    await Promise.all(
-      expiredMediaPaths.map(async (path) => {
-        try {
-          await deleteFile(path)
-        } catch {
-          // ignore missing files
-        }
-      }),
-    )
-    // Mark photos as expired in batches
+    // ⚠️ DO NOT delete the media file from R2!
+    // The photo must remain visible to admins in the admin panel.
+    // We only mark it as expired (photoExpired = 1) so it's hidden from
+    // regular users in their chats. Admins can still see it until they
+    // manually delete the conversation/message.
     for (let i = 0; i < expiredPhotoIds.length; i += 50) {
       const batch = expiredPhotoIds.slice(i, i + 50)
       const placeholders = batch.map(() => '?').join(',')
