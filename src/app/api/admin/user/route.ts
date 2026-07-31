@@ -87,9 +87,34 @@ export async function POST(req: NextRequest) {
     return jsonResponseNoCache({ ok: true })
   }
 
+  if (action === 'promote_super_admin') {
+    // Only super_admin can promote to super_admin
+    if (session.user.role !== 'super_admin') {
+      return jsonResponseNoCache({ error: 'Solo el super admin puede dar permisos de super admin' }, { status: 403 })
+    }
+    if (target.role === 'super_admin') {
+      return jsonResponseNoCache({ error: 'Este usuario ya es super admin' }, { status: 400 })
+    }
+    if (target.id === session.user.id) {
+      return jsonResponseNoCache({ error: 'No puedes darte super admin a ti mismo' }, { status: 400 })
+    }
+    await execute(`UPDATE "User" SET role = 'super_admin', "updatedAt" = ? WHERE id = ?`, [now, target.id])
+    await execute(
+      `INSERT INTO "AuditLog" (id, "actorId", "targetUserId", action, reason, "createdAt") VALUES (?, ?, ?, ?, ?, ?)`,
+      [auditId, session.user.id, target.id, 'promote_super_admin', reason, now],
+    )
+    return jsonResponseNoCache({ ok: true })
+  }
+
   if (action === 'demote_admin') {
     if (target.role === 'super_admin') {
-      return jsonResponseNoCache({ error: 'No se puede demover el super admin' }, { status: 400 })
+      // Only super_admin can demote another super_admin
+      if (session.user.role !== 'super_admin') {
+        return jsonResponseNoCache({ error: 'Solo el super admin puede quitar permisos de super admin' }, { status: 403 })
+      }
+      if (target.id === session.user.id) {
+        return jsonResponseNoCache({ error: 'No puedes quitarte super admin a ti mismo' }, { status: 400 })
+      }
     }
     await execute(`UPDATE "User" SET role = 'user', "updatedAt" = ? WHERE id = ?`, [now, target.id])
     await execute(

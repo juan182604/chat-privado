@@ -22,8 +22,8 @@ import { jsonResponseNoCache } from '@/lib/no-cache'
  */
 export async function POST(req: NextRequest) {
   const session = await getSession()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'super_admin')) {
-    return jsonResponseNoCache({ error: 'No autorizado' }, { status: 403 })
+  if (!session || session.user.role !== 'super_admin') {
+    return jsonResponseNoCache({ error: 'No autorizado — solo el super admin puede cambiar la auto-eliminación' }, { status: 403 })
   }
 
   const body = await req.json().catch(() => ({}))

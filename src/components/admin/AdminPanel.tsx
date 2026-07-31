@@ -310,12 +310,14 @@ export function AdminPanel() {
           >
             Auditoría
           </button>
-          <button
-            onClick={() => setView('settings')}
-            className={`flex-1 py-1.5 rounded-md text-sm font-medium ${view === 'settings' ? 'bg-zinc-800 text-white' : 'text-zinc-400'}`}
-          >
-            Configuración
-          </button>
+          {isSuper && (
+            <button
+              onClick={() => setView('settings')}
+              className={`flex-1 py-1.5 rounded-md text-sm font-medium ${view === 'settings' ? 'bg-zinc-800 text-white' : 'text-zinc-400'}`}
+            >
+              Configuración
+            </button>
+          )}
         </div>
         {!isSuper && (
           <p className="text-[11px] text-amber-400 mt-2">
@@ -418,7 +420,7 @@ export function AdminPanel() {
                               <Lock className="w-3 h-3" /> Bloquear
                             </button>
                           )}
-                          {isSuper && u.role !== 'admin' && (
+                          {isSuper && u.role !== 'admin' && u.role !== 'super_admin' && (
                             <button
                               onClick={() => runAction(u, 'promote_admin')}
                               className="px-2 py-1 text-xs rounded bg-zinc-800 hover:bg-zinc-700 text-cyan-400 flex items-center gap-1"
@@ -427,11 +429,27 @@ export function AdminPanel() {
                             </button>
                           )}
                           {isSuper && u.role === 'admin' && (
+                            <>
+                              <button
+                                onClick={() => runAction(u, 'promote_super_admin')}
+                                className="px-2 py-1 text-xs rounded bg-zinc-800 hover:bg-zinc-700 text-amber-400 flex items-center gap-1"
+                              >
+                                <Crown className="w-3 h-3" /> Hacer super admin
+                              </button>
+                              <button
+                                onClick={() => runAction(u, 'demote_admin')}
+                                className="px-2 py-1 text-xs rounded bg-zinc-800 hover:bg-zinc-700 text-orange-400 flex items-center gap-1"
+                              >
+                                <UserX className="w-3 h-3" /> Quitar admin
+                              </button>
+                            </>
+                          )}
+                          {isSuper && u.role === 'super_admin' && u.id !== user?.id && (
                             <button
-                              onClick={() => runAction(u, 'demote_admin')}
+                              onClick={() => { if (confirm(`¿Quitar super admin a ${u.username}?`)) runAction(u, 'demote_admin') }}
                               className="px-2 py-1 text-xs rounded bg-zinc-800 hover:bg-zinc-700 text-orange-400 flex items-center gap-1"
                             >
-                              <UserX className="w-3 h-3" /> Quitar admin
+                              <UserX className="w-3 h-3" /> Quitar super admin
                             </button>
                           )}
                           <button

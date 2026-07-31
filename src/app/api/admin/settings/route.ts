@@ -5,11 +5,12 @@ import { jsonResponseNoCache } from '@/lib/no-cache'
 
 /**
  * GET /api/admin/settings — returns current global app settings.
+ * ONLY super_admin can access this.
  */
 export async function GET() {
   const session = await getSession()
-  if (!session || (session.user.role !== 'admin' && session.user.role !== 'super_admin')) {
-    return jsonResponseNoCache({ error: 'No autorizado' }, { status: 403 })
+  if (!session || session.user.role !== 'super_admin') {
+    return jsonResponseNoCache({ error: 'No autorizado — solo el super admin puede ver la configuración' }, { status: 403 })
   }
   const settings = await getAppSettings()
   return jsonResponseNoCache({ settings })
