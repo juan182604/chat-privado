@@ -112,9 +112,15 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
         // 1. Check for new messages
         const res = await fetch(`/api/messages/poll?_t=${Date.now()}&since=${new Date(Date.now() - 10000).toISOString()}`)
         const data = await res.json()
+        let hasNewUnreadFromPeer = false
         if (data.newMessages) {
           for (const m of data.newMessages) {
             if (m.peerUniqueId === peerId) {
+              // If this is a new message FROM the peer (not from me) and not read yet,
+              // we need to mark it as read (this also starts the photo timer)
+              if (!m.fromMe && !m.readAt) {
+                hasNewUnreadFromPeer = true
+              }
               setMessages(prev => {
                 if (prev.some(p => p.id === m.id)) return prev
                 return [...prev, {
@@ -126,6 +132,15 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
               })
             }
           }
+        }
+        // If there are new unread messages from the peer (user is already in the chat),
+        // mark them as read immediately. This also starts the photo self-destruct timer.
+        if (hasNewUnreadFromPeer) {
+          await fetch('/api/messages/read', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ peerUniqueId: peerId }),
+          })
         }
         // 2. Refresh the full conversation to remove expired photos
         const res2 = await fetch(`/api/messages/send?peerUniqueId=${peerId}&_t=${Date.now()}`)
@@ -146,8 +161,8 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
             // The list changed — a photo was removed by the backend.
             // Close the lightbox if the open photo is no longer in the list.
             if (lightboxSrc) {
-              const stillExists = data2.messages.some((m: any) => 
-                m.type === 'photo' && m.mediaPath && 
+              const stillExists = data2.messages.some((m: any) =>
+                m.type === 'photo' && m.mediaPath &&
                 `/api/media?path=${encodeURIComponent(m.mediaPath)}` === lightboxSrc
               )
               if (!stillExists) setLightboxSrc(null)
