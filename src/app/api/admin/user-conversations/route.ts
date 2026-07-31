@@ -46,14 +46,15 @@ export async function GET(req: NextRequest) {
     })
   }
 
-  // Find peers with active messages
+  // Find ALL peers with messages (including expired photos — admin sees full history)
+  // Don't filter by expiresAt so expired messages still show their peer
   const sentPeers = await query(
-    `SELECT DISTINCT "receiverId" as peerId FROM "Message" WHERE "senderId" = ? AND "expiresAt" > ?`,
-    [user.id, new Date().toISOString()],
+    `SELECT DISTINCT "receiverId" as peerId FROM "Message" WHERE "senderId" = ?`,
+    [user.id],
   )
   const receivedPeers = await query(
-    `SELECT DISTINCT "senderId" as peerId FROM "Message" WHERE "receiverId" = ? AND "expiresAt" > ?`,
-    [user.id, new Date().toISOString()],
+    `SELECT DISTINCT "senderId" as peerId FROM "Message" WHERE "receiverId" = ?`,
+    [user.id],
   )
   const peerIds = new Set<string>([
     ...sentPeers.map((p: any) => p.peerId),
