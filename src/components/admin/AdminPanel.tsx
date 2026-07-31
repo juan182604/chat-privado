@@ -1120,7 +1120,7 @@ function AdminMessageBubble({
         {m.type === 'photo' && m.mediaPath && (
           <>
             <img
-              src={`/api/media?path=${encodeURIComponent(m.mediaPath)}`}
+              src={`/api/media?path=${encodeURIComponent(m.mediaPath)}&_t=${Date.now()}`}
               alt=""
               onClick={() => setLightboxOpen(true)}
               className="rounded max-w-full max-h-48 cursor-zoom-in hover:opacity-90 transition-opacity"
@@ -1133,7 +1133,7 @@ function AdminMessageBubble({
             />
             <div style={{ display: 'none' }} className="bg-zinc-800 border border-zinc-700 rounded-lg p-4 text-center">
               <ImageIcon className="w-8 h-8 text-zinc-500 mx-auto mb-1" />
-              <p className="text-xs text-zinc-400">Imagen no disponible (archivo borrado)</p>
+              <p className="text-xs text-zinc-400">Archivo no disponible en la nube</p>
             </div>
             <p className="text-[10px] text-zinc-500 mt-1 italic">Haz clic en la imagen para ampliar</p>
             {photoTimerLabel && (
@@ -1144,7 +1144,7 @@ function AdminMessageBubble({
             )}
             {m.photoExpired && (
               <p className="text-[10px] mt-1 text-amber-400 italic">
-                ⚠️ Esta foto ya se auto-destruyó para los usuarios (pero el admin puede verla)
+                ⚠️ Foto auto-destruída para los usuarios — el admin puede verla
               </p>
             )}
           </>
