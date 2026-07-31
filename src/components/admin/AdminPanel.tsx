@@ -1091,12 +1091,12 @@ function AdminMessageBubble({
       total < 3600 ? `${Math.floor(total / 60)}m` :
       `${Math.floor(total / 3600)}h`
     if (m.photoExpired) {
-      return { text: `Foto auto-destruída (${totalLabel}) — expirada para usuarios`, color: 'text-red-400' }
+      return { text: `Foto con timer de ${totalLabel} — ya expiró para los usuarios`, color: 'text-amber-400' }
     }
     if (!m.photoViewStartedAt) {
-      return { text: `Foto auto-destruible (${totalLabel}) — pendiente de apertura`, color: 'text-amber-400' }
+      return { text: `Foto con timer de ${totalLabel} — pendiente de apertura`, color: 'text-amber-400' }
     }
-    return { text: `Foto auto-destruible (${totalLabel}) — vista ${new Date(m.photoViewStartedAt).toLocaleString()}`, color: 'text-cyan-400' }
+    return { text: `Foto con timer de ${totalLabel} — vista ${new Date(m.photoViewStartedAt).toLocaleString()}`, color: 'text-cyan-400' }
   })()
 
   return (
@@ -1144,7 +1144,7 @@ function AdminMessageBubble({
             )}
             {m.photoExpired && (
               <p className="text-[10px] mt-1 text-amber-400 italic">
-                ⚠️ Foto auto-destruída para los usuarios — el admin puede verla
+                ℹ️ Esta foto ya no es visible para los usuarios (timer expirado)
               </p>
             )}
           </>
