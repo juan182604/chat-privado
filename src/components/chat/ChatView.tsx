@@ -162,24 +162,27 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
     return () => clearInterval(interval)
   }, [peerId, lightboxSrc])
 
-  // Screenshot detection — ONLY on mobile (Android/iPhone), NOT on PC.
-  // Uses visibilitychange ONLY (not blur/focusout which fire when opening
-  // the photo picker and cause false positives).
-  // Note: True screenshot detection is not possible in iOS Safari.
-  // This detects when the user LEAVES the chat (goes to home screen, switches app).
+  // Screenshot detection — DISABLED on PC, only on REAL mobile devices.
+  //
+  // IMPORTANT: True screenshot detection is IMPOSSIBLE in a web browser on iPhone.
+  // Apple does not provide any API for this. Taking a screenshot (power + volume up)
+  // does NOT fire any JavaScript event in iOS Safari.
+  //
+  // What this detects: when the user LEAVES the chat (goes to home screen,
+  // switches app, or locks the phone) — which is the closest we can get.
+  //
+  // This is DISABLED on PC completely.
   useEffect(() => {
-    // 🚫 DISABLED on desktop/PC — only for mobile
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent || '',
-    )
-    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
-    if (!isMobile && !isTouch) {
-      return // PC user — no screenshot detection
+    // 🚫 DISABLED on desktop/PC — STRICT mobile-only check
+    // Only enable on actual phones (not touch-screen laptops)
+    const ua = navigator.userAgent || ''
+    const isPhone = /iPhone|iPod|Android.*Mobile|Windows Phone|BlackBerry|Opera Mini/i.test(ua)
+    // iPad is NOT included because iPadOS reports as Macintosh and is hard to distinguish from Mac
+    if (!isPhone) {
+      return // PC/Mac/iPad — no screenshot detection
     }
 
     let screenshotSent = false
-    // Flag to pause detection while user is picking a photo/recording voice
-    // (prevents false positives from the file picker opening)
     const sendScreenshot = () => {
       if (screenshotSent) return
       screenshotSent = true
@@ -188,12 +191,10 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ toUniqueId: peerId }),
       }).catch(() => {})
-      // Reset after 10 seconds so it can trigger again later
       setTimeout(() => { screenshotSent = false }, 10000)
     }
 
-    // Only use visibilitychange — fires when user actually leaves the page/app.
-    // Does NOT fire when opening photo picker or recording voice.
+    // Only visibilitychange — fires when user leaves the app/tab
     const handleVisibilityChange = () => {
       if (document.hidden) {
         sendScreenshot()
