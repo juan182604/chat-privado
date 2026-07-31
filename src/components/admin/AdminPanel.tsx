@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAppStore } from '@/lib/store'
 import { VoicePlayer } from '@/components/chat/VoicePlayer'
 import { Lightbox } from '@/components/chat/Lightbox'
-import { Shield, ShieldAlert, Trash2, Lock, Unlock, Eye, Search, Crown, UserCheck, UserX, ScrollText, ArrowLeft, MessageCircle, X, Calendar, Hash, AtSign, User as UserIcon, Clock, KeyRound, Camera, ImageIcon } from 'lucide-react'
+import { Shield, ShieldAlert, Trash2, Lock, Unlock, Eye, Search, Crown, UserCheck, UserX, ScrollText, ArrowLeft, MessageCircle, X, Calendar, Hash, AtSign, User as UserIcon, Clock, KeyRound, ImageIcon } from 'lucide-react'
 
 type AdminUser = {
   id: string
@@ -1138,14 +1138,6 @@ function AdminMessageBubble({
         )}
         {m.type === 'photo' && !m.mediaPath && (
           <p className="text-xs text-zinc-500 italic">Foto (sin archivo)</p>
-        )}
-        {m.type === 'screenshot' && (
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2 text-center">
-            <p className="text-xs text-amber-300 flex items-center justify-center gap-1">
-              <Camera className="w-3 h-3" />
-              {m.content}
-            </p>
-          </div>
         )}
         {m.type === 'voice' && m.mediaPath && (
           <div className="py-1">
