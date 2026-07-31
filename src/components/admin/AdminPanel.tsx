@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAppStore } from '@/lib/store'
 import { VoicePlayer } from '@/components/chat/VoicePlayer'
 import { Lightbox } from '@/components/chat/Lightbox'
-import { Shield, ShieldAlert, Trash2, Lock, Unlock, Eye, Search, Crown, UserCheck, UserX, ScrollText, ArrowLeft, MessageCircle, X, Calendar, Hash, AtSign, User as UserIcon, Clock, KeyRound } from 'lucide-react'
+import { Shield, ShieldAlert, Trash2, Lock, Unlock, Eye, Search, Crown, UserCheck, UserX, ScrollText, ArrowLeft, MessageCircle, X, Calendar, Hash, AtSign, User as UserIcon, Clock, KeyRound, Camera, ImageIcon } from 'lucide-react'
 
 type AdminUser = {
   id: string
@@ -1099,14 +1099,25 @@ function AdminMessageBubble({
           {m.readAt && <span className="text-emerald-500">· leído</span>}
         </p>
         {m.type === 'text' && <p className="text-zinc-100 break-words whitespace-pre-wrap">{m.content}</p>}
-        {m.type === 'photo' && m.mediaPath && (
+        {m.type === 'photo' && m.mediaPath && !m.photoExpired && (
           <>
             <img
               src={`/api/media?path=${encodeURIComponent(m.mediaPath)}`}
               alt=""
               onClick={() => setLightboxOpen(true)}
-              className={`rounded max-w-full max-h-48 cursor-zoom-in hover:opacity-90 transition-opacity ${m.photoExpired ? 'opacity-60 border border-red-500/30' : ''}`}
+              className="rounded max-w-full max-h-48 cursor-zoom-in hover:opacity-90 transition-opacity"
+              onError={(e) => {
+                // If image fails to load (file deleted from R2), show fallback
+                const target = e.target as HTMLImageElement
+                target.style.display = 'none'
+                const fallback = target.nextElementSibling as HTMLElement
+                if (fallback) fallback.style.display = 'block'
+              }}
             />
+            <div style={{ display: 'none' }} className="bg-zinc-800 border border-zinc-700 rounded-lg p-4 text-center">
+              <ImageIcon className="w-8 h-8 text-zinc-500 mx-auto mb-1" />
+              <p className="text-xs text-zinc-400">Imagen no disponible</p>
+            </div>
             <p className="text-[10px] text-zinc-500 mt-1 italic">Haz clic en la imagen para ampliar</p>
             {photoTimerLabel && (
               <p className={`text-[10px] mt-1 flex items-center gap-1 ${photoTimerLabel.color}`}>
@@ -1115,6 +1126,26 @@ function AdminMessageBubble({
               </p>
             )}
           </>
+        )}
+        {m.type === 'photo' && m.mediaPath && m.photoExpired && (
+          <div className="bg-zinc-800/50 border border-red-500/30 rounded-lg p-3 text-center">
+            <ImageIcon className="w-6 h-6 text-red-400/50 mx-auto mb-1" />
+            <p className="text-xs text-red-400">Foto auto-destruída</p>
+            {photoTimerLabel && (
+              <p className={`text-[10px] mt-1 ${photoTimerLabel.color}`}>{photoTimerLabel.text}</p>
+            )}
+          </div>
+        )}
+        {m.type === 'photo' && !m.mediaPath && (
+          <p className="text-xs text-zinc-500 italic">Foto (sin archivo)</p>
+        )}
+        {m.type === 'screenshot' && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2 text-center">
+            <p className="text-xs text-amber-300 flex items-center justify-center gap-1">
+              <Camera className="w-3 h-3" />
+              {m.content}
+            </p>
+          </div>
         )}
         {m.type === 'voice' && m.mediaPath && (
           <div className="py-1">

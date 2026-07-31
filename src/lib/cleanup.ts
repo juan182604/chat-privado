@@ -20,11 +20,11 @@ import { getAppSettings } from '@/lib/settings'
 export async function cleanupExpiredMessages(): Promise<number> {
   const now = new Date().toISOString()
 
-  // --- Operation 1: ALWAYS expire photos with self-destruct timer ---
+  // --- Operation 1: ALWAYS expire photos AND screenshots with self-destruct timer ---
   // This is independent of the global auto-delete setting.
   const photosToExpire = await query(
     `SELECT id, "mediaPath", "photoViewStartedAt", "photoExpiresSeconds" FROM "Message"
-     WHERE type = 'photo'
+     WHERE type IN ('photo', 'screenshot')
        AND "photoExpiresSeconds" IS NOT NULL
        AND "photoViewStartedAt" IS NOT NULL
        AND "photoExpired" = 0`,
@@ -144,10 +144,10 @@ export async function markConversationRead(
     }
   }
 
-  // 2. Start photo self-destruct timer (always, regardless of auto-delete setting)
+  // 2. Start photo/screenshot self-destruct timer (always, regardless of auto-delete setting)
   const photosPending = await query(
     `SELECT id FROM "Message"
-     WHERE "receiverId" = ? AND "senderId" = ? AND type = 'photo'
+     WHERE "receiverId" = ? AND "senderId" = ? AND type IN ('photo', 'screenshot')
        AND "photoExpiresSeconds" IS NOT NULL
        AND "photoViewStartedAt" IS NULL
        AND "photoExpired" = 0

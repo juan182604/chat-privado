@@ -23,6 +23,29 @@ export async function GET(req: NextRequest) {
   }
   const user = userRows[0]
 
+  // PERMISSION CHECK:
+  // - super_admin can see ALL conversations of any user
+  // - regular admin CANNOT see conversations if:
+  //   - The target user is an admin (admin-to-admin chats are private)
+  //   - The target user has conversations WITH an admin
+  const isSuperAdmin = session.user.role === 'super_admin'
+  if (!isSuperAdmin && (user.role === 'admin' || user.role === 'super_admin')) {
+    return jsonResponseNoCache({
+      error: 'No tienes permiso para ver las conversaciones de otros admins. Solo el super admin puede verlas.',
+      user: {
+        id: user.id,
+        uniqueId: user.uniqueId,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        blocked: !!user.blocked,
+      },
+      conversations: [],
+      serverTime: new Date().toISOString(),
+    })
+  }
+
   // Find peers with active messages
   const sentPeers = await query(
     `SELECT DISTINCT "receiverId" as peerId FROM "Message" WHERE "senderId" = ? AND "expiresAt" > ?`,
@@ -40,19 +63,27 @@ export async function GET(req: NextRequest) {
   const conversations = []
   for (const peerId of Array.from(peerIds)) {
     const peerRows = await query(
-      `SELECT "uniqueId", username, "firstName", "lastName", blocked FROM "User" WHERE id = ?`,
+      `SELECT "uniqueId", username, "firstName", "lastName", role, blocked FROM "User" WHERE id = ?`,
       [peerId],
     )
     if (peerRows.length === 0) continue
     const peer = peerRows[0]
+
+    // PERMISSION CHECK for regular admins:
+    // Skip conversations where the peer is an admin (admin-to-admin or user-to-admin)
+    if (!isSuperAdmin && (peer.role === 'admin' || peer.role === 'super_admin')) {
+      continue
+    }
+
+    // Get ALL messages including expired photos (admin can see history)
     const messages = await query(
       `SELECT * FROM "Message"
-       WHERE "expiresAt" > ? AND (
+       WHERE (
          ("senderId" = ? AND "receiverId" = ?) OR
          ("senderId" = ? AND "receiverId" = ?)
        )
        ORDER BY "sentAt" ASC LIMIT 500`,
-      [new Date().toISOString(), user.id, peerId, peerId, user.id],
+      [user.id, peerId, peerId, user.id],
     )
     conversations.push({
       peer: { ...peer, blocked: !!peer.blocked },

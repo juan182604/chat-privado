@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { useAppStore, ChatMessage } from '@/lib/store'
 import { VoicePlayer } from '@/components/chat/VoicePlayer'
 import { Lightbox } from '@/components/chat/Lightbox'
-import { ArrowLeft, Phone, Video, Send, Paperclip, Mic, ImageIcon, X, Clock, Timer } from 'lucide-react'
+import { ArrowLeft, Phone, Video, Send, Paperclip, Mic, ImageIcon, X, Clock, Timer, Camera } from 'lucide-react'
 
 const PHOTO_TIMER_PRESETS: { label: string; value: number | null }[] = [
   { label: 'Sin límite', value: null },
@@ -161,6 +161,27 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
     const interval = setInterval(poll, 1000)
     return () => clearInterval(interval)
   }, [peerId, lightboxSrc])
+
+  // Screenshot detection — when user leaves the chat (visibilitychange),
+  // send a screenshot notification to the other person
+  useEffect(() => {
+    let screenshotSent = false
+    const handleVisibilityChange = () => {
+      if (document.hidden && !screenshotSent) {
+        screenshotSent = true
+        // Send screenshot notification
+        fetch('/api/messages/screenshot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ toUniqueId: peerId }),
+        }).catch(() => {})
+        // Reset after 10 seconds so it can trigger again later
+        setTimeout(() => { screenshotSent = false }, 10000)
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [peerId])
 
   const sendText = async () => {
     const text = input.trim()
@@ -509,6 +530,25 @@ function MessageBubble({ msg, myId, onPhotoClick }: { msg: ChatMessage; myId: st
 
     return () => clearInterval(interval)
   }, [msg.id, msg.type, msg.photoExpiresSeconds, msg.photoViewStartedAt])
+
+  // Screenshot notification — centered system message that auto-deletes after 5s
+  if (msg.type === 'screenshot') {
+    // If expired, don't render anything
+    if (photoExpired) return null
+    return (
+      <div className="flex justify-center my-2">
+        <div className="bg-amber-500/20 border border-amber-500/40 rounded-full px-4 py-2 text-xs text-amber-300 flex items-center gap-2 max-w-[90%]">
+          <Camera className="w-3.5 h-3.5 shrink-0" />
+          <span className="text-center">
+            {msg.content}
+            {remaining !== null && remaining > 0 && (
+              <span className="ml-2 text-[10px] text-amber-400/70">· {remaining}s</span>
+            )}
+          </span>
+        </div>
+      </div>
+    )
+  }
 
   if (msg.type === 'call') {
     return (
