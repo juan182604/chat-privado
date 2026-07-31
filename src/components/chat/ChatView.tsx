@@ -162,9 +162,24 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
     return () => clearInterval(interval)
   }, [peerId, lightboxSrc])
 
-  // Screenshot detection — multiple methods to catch screenshots on iPhone/Android
+  // Screenshot detection — ONLY on mobile (Android/iPhone), NOT on PC.
+  // Uses visibilitychange ONLY (not blur/focusout which fire when opening
+  // the photo picker and cause false positives).
+  // Note: True screenshot detection is not possible in iOS Safari.
+  // This detects when the user LEAVES the chat (goes to home screen, switches app).
   useEffect(() => {
+    // 🚫 DISABLED on desktop/PC — only for mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent || '',
+    )
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+    if (!isMobile && !isTouch) {
+      return // PC user — no screenshot detection
+    }
+
     let screenshotSent = false
+    // Flag to pause detection while user is picking a photo/recording voice
+    // (prevents false positives from the file picker opening)
     const sendScreenshot = () => {
       if (screenshotSent) return
       screenshotSent = true
@@ -177,7 +192,8 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
       setTimeout(() => { screenshotSent = false }, 10000)
     }
 
-    // Method 1: visibilitychange — when user leaves tab/app (works on Android + desktop)
+    // Only use visibilitychange — fires when user actually leaves the page/app.
+    // Does NOT fire when opening photo picker or recording voice.
     const handleVisibilityChange = () => {
       if (document.hidden) {
         sendScreenshot()
@@ -185,29 +201,8 @@ export function ChatView({ peerId, onBack }: { peerId: string; onBack: () => voi
     }
     document.addEventListener('visibilitychange', handleVisibilityChange)
 
-    // Method 2: blur — when window loses focus (app switcher on iPhone)
-    const handleBlur = () => {
-      sendScreenshot()
-    }
-    window.addEventListener('blur', handleBlur)
-
-    // Method 3: pagehide — when page is hidden (iPhone Safari)
-    const handlePageHide = () => {
-      sendScreenshot()
-    }
-    window.addEventListener('pagehide', handlePageHide)
-
-    // Method 4: blur on window focus loss (catches iOS screenshot in some cases)
-    const handleFocusOut = () => {
-      sendScreenshot()
-    }
-    window.addEventListener('focusout', handleFocusOut)
-
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
-      window.removeEventListener('blur', handleBlur)
-      window.removeEventListener('pagehide', handlePageHide)
-      window.removeEventListener('focusout', handleFocusOut)
     }
   }, [peerId])
 
